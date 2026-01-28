@@ -1,91 +1,103 @@
-import Link from "next/link"
+'use client';
 
-export default function Component() {
+import Image from 'next/image';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { Building2, ArrowRight, ShieldCheck, Search, Wallet, Star } from 'lucide-react';
+import { PlaceHolderImages } from '@/lib/placeholder-images';
+
+export default function Home() {
+  const heroImage = PlaceHolderImages.find(p => p.id === 'property-2-1');
+
+  const features = [
+    {
+      icon: <ShieldCheck className="h-8 w-8 text-primary" />,
+      title: 'Verified Properties',
+      description: 'Every property is vetted by our team to ensure quality and safety.',
+    },
+    {
+      icon: <Search className="h-8 w-8 text-primary" />,
+      title: 'Advanced Search',
+      description: 'Filter by distance, rent, amenities, and more to find your perfect match.',
+    },
+    {
+      icon: <Wallet className="h-8 w-8 text-primary" />,
+      title: 'Budget-Friendly',
+      description: 'Transparent pricing with no hidden costs to fit your student budget.',
+    },
+    {
+      icon: <Star className="h-8 w-8 text-primary" />,
+      title: 'Real Reviews',
+      description: 'Read honest reviews from fellow students to make informed decisions.',
+    },
+  ];
+
   return (
-    <div className="flex flex-col min-h-screen">
-      <header className="px-4 lg:px-6 h-14 flex items-center">
-        <Link href="#" className="flex items-center justify-center" prefetch={false}>
-          <MountainIcon className="h-6 w-6" />
-          <span className="sr-only">CampusConnect</span>
-        </Link>
-        <nav className="ml-auto flex gap-4 sm:gap-6">
-          <Link href="#" className="text-sm font-medium hover:underline underline-offset-4" prefetch={false}>
-            Features
-          </Link>
-          <Link href="#" className="text-sm font-medium hover:underline underline-offset-4" prefetch={false}>
-            Pricing
-          </Link>
-          <Link href="#" className="text-sm font-medium hover:underline underline-offset-4" prefetch={false}>
-            About
-          </Link>
-          <Link href="#" className="text-sm font-medium hover:underline underline-offset-4" prefetch={false}>
-            Contact
-          </Link>
-        </nav>
-      </header>
+    <div className="flex flex-col min-h-[calc(100vh-4rem)]">
       <main className="flex-1">
-        <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48">
-          <div className="container px-4 md:px-6">
-            <div className="flex flex-col items-center space-y-4 text-center">
-              <div className="space-y-2">
-                <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none">
-                  Your Campus Life, Connected.
-                </h1>
-                <p className="mx-auto max-w-[700px] text-gray-500 md:text-xl dark:text-gray-400">
-                  The all-in-one platform for student housing and meal plans. Find your perfect place, connect with
-                  landlords, and manage your college life with ease.
-                </p>
-              </div>
-              <div className="space-x-4">
-                <Link
-                  href="#"
-                  className="inline-flex h-9 items-center justify-center rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-gray-50 shadow transition-colors hover:bg-gray-900/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gray-950 disabled:pointer-events-none disabled:opacity-50 dark:bg-gray-50 dark:text-gray-900 dark:hover:bg-gray-50/90 dark:focus-visible:ring-gray-300"
-                  prefetch={false}
-                >
-                  Get Started
+        <section className="relative w-full h-[80vh] min-h-[500px] flex items-center justify-center text-center text-white overflow-hidden">
+          {heroImage && (
+            <Image
+              src={heroImage.imageUrl}
+              alt="A clean, modern single room in an Indian student residency."
+              fill
+              className="object-cover"
+              priority
+              data-ai-hint={heroImage.imageHint}
+            />
+          )}
+          <div className="absolute inset-0 bg-black/50" />
+          <div className="relative z-10 p-4 animate-fade-in-up">
+            <div className="flex justify-center md:justify-center items-center gap-3 mb-4">
+              <Building2 className="h-10 w-10" />
+              <span className="text-3xl font-bold font-headline">Campus Connect</span>
+            </div>
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight font-headline">
+              Find Your Perfect Student Home
+            </h1>
+            <p className="mt-4 text-lg md:text-xl max-w-2xl mx-auto">
+              Your one-stop solution for student accommodations. Search, compare, and book your ideal stay near campus.
+            </p>
+            <div className="mt-8">
+              <Button size="lg" asChild className="font-bold text-lg transition-transform transform hover:scale-105">
+                <Link href="/onboarding">
+                  Get Started <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
-                <Link
-                  href="#"
-                  className="inline-flex h-9 items-center justify-center rounded-md border border-gray-200 bg-white px-4 py-2 text-sm font-medium shadow-sm transition-colors hover:bg-gray-100 hover:text-gray-900 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gray-950 disabled:pointer-events-none disabled:opacity-50 dark:border-gray-800 dark:bg-gray-950 dark:hover:bg-gray-800 dark:hover:text-gray-50 dark:focus-visible:ring-gray-300"
-                  prefetch={false}
-                >
-                  Learn More
-                </Link>
-              </div>
+              </Button>
+            </div>
+          </div>
+        </section>
+
+        <section id="features" className="py-16 md:py-24 bg-background">
+          <div className="container mx-auto px-4 md:px-6">
+            <div className="text-center animate-fade-in-up">
+              <h2 className="text-3xl font-bold tracking-tight font-headline sm:text-4xl">
+                Why Choose Campus Connect?
+              </h2>
+              <p className="mt-4 text-lg text-muted-foreground">
+                We make finding student housing simple, safe, and stress-free.
+              </p>
+            </div>
+            <div className="relative mt-12 w-full overflow-hidden">
+                <div className="flex animate-marquee hover:pause">
+                    {[...features, ...features].map((feature, index) => (
+                         <div key={index} className="flex-shrink-0 w-full sm:w-1/2 lg:w-1/4 p-4">
+                             <div className="flex flex-col items-center text-center h-full">
+                                <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+                                    {feature.icon}
+                                </div>
+                                <h3 className="text-xl font-bold">{feature.title}</h3>
+                                <p className="mt-2 text-muted-foreground flex-grow">
+                                    {feature.description}
+                                </p>
+                            </div>
+                        </div>
+                    ))}
+                </div>
             </div>
           </div>
         </section>
       </main>
-      <footer className="flex flex-col gap-2 sm:flex-row py-6 w-full shrink-0 items-center px-4 md:px-6 border-t">
-        <p className="text-xs text-gray-500 dark:text-gray-400">&copy; 2024 CampusConnect. All rights reserved.</p>
-        <nav className="sm:ml-auto flex gap-4 sm:gap-6">
-          <Link href="#" className="text-xs hover:underline underline-offset-4" prefetch={false}>
-            Terms of Service
-          </Link>
-          <Link href="#" className="text-xs hover:underline underline-offset-4" prefetch={false}>
-            Privacy
-          </Link>
-        </nav>
-      </footer>
     </div>
-  )
-}
-
-function MountainIcon(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="m8 3 4 8 5-5 5 15H2L8 3z" />
-    </svg>
-  )
+  );
 }

@@ -1,0 +1,294 @@
+{
+  "entities": {
+    "Property": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Property",
+      "type": "object",
+      "description": "Represents a property listing on the Campus Connect platform.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Property entity."
+        },
+        "collegeName": {
+          "type": "string",
+          "description": "Name of the college near the property, used for search matching."
+        },
+        "locationLat": {
+          "type": "number",
+          "description": "Latitude of the property's location."
+        },
+        "locationLng": {
+          "type": "number",
+          "description": "Longitude of the property's location."
+        },
+        "facilities": {
+          "type": "array",
+          "description": "List of facilities available at the property (e.g., Wi-Fi, AC).",
+          "items": {
+            "type": "string"
+          }
+        },
+        "rent": {
+          "type": "number",
+          "description": "Monthly rent amount for the property."
+        },
+        "type": {
+          "type": "string",
+          "description": "Type of room (e.g., 'single', 'shared')."
+        },
+        "images": {
+          "type": "array",
+          "description": "URLs of images showcasing the property.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "distanceFromCollege": {
+          "type": "number",
+          "description": "Distance from the nearest college in kilometers."
+        },
+        "totalCapacity": {
+          "type": "number",
+          "description": "The maximum capacity for this property."
+        },
+        "currentAvailability": {
+          "type": "number",
+          "description": "The current number of beds available."
+        },
+        "ownerContactNumber": {
+          "type": "string",
+          "description": "The contact number of the owner."
+        },
+        "propertyOwnerId": {
+          "type": "string",
+          "description": "Reference to PropertyOwner. (Relationship: PropertyOwner 1:N Property)"
+        },
+        "messDetails": {
+          "type": "object",
+          "description": "Details about the mess/food facility.",
+          "properties": {
+            "available": {
+              "type": "boolean",
+              "description": "Is a mess facility available."
+            },
+            "type": {
+              "type": "string",
+              "enum": ["veg", "non-veg", "both"],
+              "description": "Type of food served."
+            },
+            "pricingModel": {
+                "type": "string",
+                "enum": ["included", "per-meal", "monthly"],
+                "description": "How the mess is priced."
+            },
+            "price": {
+                "type": "number",
+                "description": "The price for the mess, if not included in rent."
+            },
+            "mealPlans": {
+                "type": "array",
+                "description": "Available meal plans or combos.",
+                "items": { "type": "string" }
+            },
+            "timings": {
+              "type": "string",
+              "description": "Operating hours of the mess."
+            },
+            "distanceFromRoom": {
+              "type": "number",
+              "description": "Distance of the mess from the room in meters."
+            }
+          }
+        }
+      },
+      "required": [
+        "id",
+        "collegeName",
+        "locationLat",
+        "locationLng",
+        "facilities",
+        "rent",
+        "type",
+        "images",
+        "distanceFromCollege",
+        "totalCapacity",
+        "currentAvailability",
+        "ownerContactNumber",
+        "propertyOwnerId"
+      ]
+    },
+    "Review": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Review",
+      "type": "object",
+      "description": "Represents a review and rating for a property submitted by a student.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Review entity."
+        },
+        "rating": {
+          "type": "number",
+          "description": "Rating given by the student (e.g., 1 to 5)."
+        },
+        "comment": {
+          "type": "string",
+          "description": "Textual review comment provided by the student."
+        },
+        "propertyId": {
+          "type": "string",
+          "description": "Reference to Property. (Relationship: Property 1:N Review)"
+        },
+        "studentId": {
+          "type": "string",
+          "description": "Reference to Student. (Relationship: Student 1:N Review)"
+        }
+      },
+      "required": [
+        "id",
+        "rating",
+        "comment",
+        "propertyId",
+        "studentId"
+      ]
+    },
+    "Student": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Student",
+      "type": "object",
+      "description": "Represents a student user on the Campus Connect platform.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Student entity."
+        },
+        "name": {
+          "type": "string",
+          "description": "Full name of the student."
+        },
+        "email": {
+          "type": "string",
+          "description": "Email address of the student.",
+          "format": "email"
+        },
+        "collegeName": {
+          "type": "string",
+          "description": "Name of the college the student attends."
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "email",
+        "collegeName"
+      ]
+    },
+    "PropertyOwner": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "PropertyOwner",
+      "type": "object",
+      "description": "Represents a property owner user on the Campus Connect platform.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the PropertyOwner entity."
+        },
+        "name": {
+          "type": "string",
+          "description": "Full name of the property owner."
+        },
+        "email": {
+          "type": "string",
+          "description": "Email address of the property owner.",
+          "format": "email"
+        },
+        "contactNumber": {
+          "type": "string",
+          "description": "Contact phone number of the property owner."
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "email",
+        "contactNumber"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/properties/{propertyId}",
+        "definition": {
+          "entityName": "Property",
+          "schema": {
+            "$ref": "#/backend/entities/Property"
+          },
+          "description": "Represents a property listing on the Campus Connect platform. Includes denormalized 'propertyOwnerId' for authorization independence.",
+          "params": [
+            {
+              "name": "propertyId",
+              "description": "Unique identifier for the Property entity."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/reviews/{reviewId}",
+        "definition": {
+          "entityName": "Review",
+          "schema": {
+            "$ref": "#/backend/entities/Review"
+          },
+          "description": "Represents a review and rating for a property submitted by a student. Includes 'propertyId' and 'studentId' for linking reviews to properties and students.",
+          "params": [
+            {
+              "name": "reviewId",
+              "description": "Unique identifier for the Review entity."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/students/{studentId}",
+        "definition": {
+          "entityName": "Student",
+          "schema": {
+            "$ref": "#/backend/entities/Student"
+          },
+          "description": "Represents a student user on the Campus Connect platform.",
+          "params": [
+            {
+              "name": "studentId",
+              "description": "Unique identifier for the Student entity."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/propertyOwners/{propertyOwnerId}",
+        "definition": {
+          "entityName": "PropertyOwner",
+          "schema": {
+            "$ref": "#/backend/entities/PropertyOwner"
+          },
+          "description": "Represents a property owner user on the Campus Connect platform.",
+          "params": [
+            {
+              "name": "propertyOwnerId",
+              "description": "Unique identifier for the PropertyOwner entity."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore data structure is designed to support the Campus Connect platform, focusing on property listings, student reviews, and user roles (Property Owner and Student). It prioritizes authorization independence, clear access models, and predictable data schemas for secure and scalable operations.\n\n**Authorization Independence:** To avoid hierarchical authorization dependencies, the `Property` documents include the `propertyOwnerId`, denormalizing the relationship between the property and the owner. This eliminates the need for `get()` calls to the owner document in security rules, enabling atomic operations (transactions/batches). Similarly, `Review` documents include `propertyId` and `studentId` to independently associate reviews with properties and students, avoiding complex `get()` calls for authorization.\n\n**Structural Segregation:**  The data structure segregates data based on access requirements.  User profiles (`Student` and `PropertyOwner`) are stored in separate top-level collections.  Properties are stored in a single collection (`properties`), but are secured using the `propertyOwnerId` field which provides clear ownership and prevents unauthorized listing updates.  Reviews are stored in a collection (`reviews`).\n\n**Access Modeling:** The structure follows a path-based ownership model for user-owned data and a membership model where applicable.\n\n*   `/propertyOwners/{propertyOwnerId}/properties/{propertyId}`:  While not implemented in this version of the schema, it provides stronger ownership invariants.\n*   `/students/{studentId}`:  Standard path-based ownership for student profiles.\n*   `/properties/{propertyId}`: Properties are globally accessible for reading but restricted for creation/modification to the respective owner.\n*   `/reviews/{reviewId}`: Reviews are accessible, but creating a review is restricted to authenticated students, referencing the `studentId`.\n\n**QAPs (Rules are not Filters):**\n\n*   Secure `list` operations are supported through structural segregation. Listing properties is generally allowed, but creation and modification are restricted to property owners.  Listing reviews is generally allowed. Security rules ensure that students can only create reviews associated with their `studentId`.\n\n**Data Clarity and Predictability:** Explicit state modeling is enforced through the use of required fields in each entity schema. Naming conventions are consistently applied (e.g., `propertyOwnerId` for ownership), enhancing readability and maintainability."
+  }
+}
