@@ -4,6 +4,10 @@ import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadat
 
 type TEntry = typeof import('../../../src/app/layout.js')
 
+type SegmentParams<T extends Object = any> = T extends Record<string, any>
+  ? { [K in keyof T]: T[K] extends string ? string | string[] | undefined : never }
+  : T
+
 // Check that the entry is a valid entry
 checkFields<Diff<{
   default: Function
@@ -25,6 +29,7 @@ checkFields<Diff<{
   
 }, TEntry, ''>>()
 
+
 // Check the prop type of the entry function
 checkFields<Diff<LayoutProps, FirstArg<TEntry['default']>, 'default'>>()
 
@@ -42,19 +47,18 @@ if ('generateViewport' in entry) {
 
 // Check the arguments and return type of the generateStaticParams function
 if ('generateStaticParams' in entry) {
-  checkFields<Diff<{ params: PageParams }, FirstArg<MaybeField<TEntry, 'generateStaticParams'>>, 'generateStaticParams'>>()
+  checkFields<Diff<{ params: SegmentParams }, FirstArg<MaybeField<TEntry, 'generateStaticParams'>>, 'generateStaticParams'>>()
   checkFields<Diff<{ __tag__: 'generateStaticParams', __return_type__: any[] | Promise<any[]> }, { __tag__: 'generateStaticParams', __return_type__: ReturnType<MaybeField<TEntry, 'generateStaticParams'>> }>>()
 }
 
-type PageParams = any
 export interface PageProps {
-  params?: any
-  searchParams?: any
+  params?: Promise<SegmentParams>
+  searchParams?: Promise<any>
 }
 export interface LayoutProps {
   children?: React.ReactNode
 
-  params?: any
+  params?: Promise<SegmentParams>
 }
 
 // =============
