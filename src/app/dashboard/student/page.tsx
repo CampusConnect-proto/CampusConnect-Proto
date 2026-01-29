@@ -76,6 +76,7 @@ export default function StudentDashboardPage() {
             studentName: student.name,
             propertyId: bookedProperty.id,
             propertyName: bookedProperty.name,
+            propertyOwnerId: bookedProperty.propertyOwnerId,
             message: values.message,
             createdAt: serverTimestamp(),
             status: 'open'

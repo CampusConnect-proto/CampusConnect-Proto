@@ -71,16 +71,10 @@ export default function OwnerDashboardPage() {
         return { totalProperties, totalRent, totalCapacity, totalAvailability, occupancy };
     }, [displayProperties]);
 
-    const ownerPropertyIds = useMemo(() => {
-        if (!displayProperties) return [];
-        return displayProperties.map(p => p.id);
-    }, [displayProperties]);
-
     const suggestionsQuery = useMemoFirebase(() => {
-        if (!firestore || ownerPropertyIds.length === 0) return null;
-        // Firestore 'in' queries are limited to 30 items. For a larger scale app, this would need a different approach.
-        return query(collection(firestore, 'suggestions'), where('propertyId', 'in', ownerPropertyIds), orderBy('createdAt', 'desc'));
-    }, [firestore, ownerPropertyIds]);
+        if (!user || !firestore) return null;
+        return query(collection(firestore, 'suggestions'), where('propertyOwnerId', '==', user.uid), orderBy('createdAt', 'desc'));
+    }, [user, firestore]);
 
     const { data: suggestions, isLoading: areSuggestionsLoading } = useCollection<Suggestion>(suggestionsQuery);
     

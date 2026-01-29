@@ -93,6 +93,7 @@ export interface Suggestion {
   id: string;
   studentId: string;
   propertyId: string;
+  propertyOwnerId: string;
   studentName: string;
   propertyName: string;
   message: string;

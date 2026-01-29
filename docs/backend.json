@@ -280,12 +280,29 @@
         "email",
         "contactNumber"
       ]
+    },
+    "Suggestion": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Suggestion",
+      "type": "object",
+      "description": "Represents a suggestion or issue reported by a student for a property.",
+      "properties": {
+        "id": { "type": "string", "description": "Unique identifier for the Suggestion." },
+        "studentId": { "type": "string", "description": "The UID of the student who submitted the suggestion." },
+        "propertyId": { "type": "string", "description": "The ID of the property the suggestion is for." },
+        "propertyOwnerId": { "type": "string", "description": "The UID of the owner of the property." },
+        "studentName": { "type": "string", "description": "The name of the student (denormalized)." },
+        "propertyName": { "type": "string", "description": "The name of the property (denormalized)." },
+        "message": { "type": "string", "description": "The content of the suggestion or issue." },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Timestamp of when the suggestion was created." },
+        "status": { "type": "string", "enum": ["open", "in-progress", "resolved"], "description": "The current status of the suggestion." }
+      },
+      "required": ["studentId", "propertyId", "propertyOwnerId", "message", "createdAt", "status"]
     }
   },
   "auth": {
     "providers": [
-      "password",
-      "anonymous"
+      "password"
     ]
   },
   "firestore": {
@@ -366,6 +383,22 @@
             {
               "name": "propertyOwnerId",
               "description": "Unique identifier for the PropertyOwner entity."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/suggestions/{suggestionId}",
+        "definition": {
+          "entityName": "Suggestion",
+          "schema": {
+            "$ref": "#/backend/entities/Suggestion"
+          },
+          "description": "Stores student-submitted suggestions or issues for properties. Secured by propertyOwnerId and studentId.",
+          "params": [
+            {
+              "name": "suggestionId",
+              "description": "Unique identifier for the Suggestion entity."
             }
           ]
         }

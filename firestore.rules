@@ -76,6 +76,10 @@ service cloud.firestore {
       return isOwner(review.studentId);
     }
     
+    function isNewSuggestionAuthor(suggestion) {
+      return isOwner(suggestion.studentId);
+    }
+    
     function isCreatingOwnProfile(userDocId, userProfile) {
       return isOwner(userDocId) && userProfile.id == userDocId;
     }
@@ -94,6 +98,14 @@ service cloud.firestore {
 
     function isReviewAuthorImmutable(newDoc) {
       return newDoc.studentId == resource.data.studentId;
+    }
+
+    function isSuggestionStudentImmutable(newSuggestion) {
+      return newSuggestion.studentId == resource.data.studentId;
+    }
+    
+    function isSuggestionPropertyOwnerImmutable(newSuggestion) {
+      return newSuggestion.propertyOwnerId == resource.data.propertyOwnerId;
     }
 
     // -------------------------------------------------------------------------
@@ -146,6 +158,17 @@ service cloud.firestore {
       allow create: if isCreatingOwnProfile(propertyOwnerId, request.resource.data);
       allow update: if isExistingOwner(propertyOwnerId) && isIdImmutable(request.resource.data);
       allow delete: if isExistingOwner(propertyOwnerId);
+    }
+
+    // -------------------------------------------------------------------------
+    // Collection: suggestions
+    // -------------------------------------------------------------------------
+    match /suggestions/{suggestionId} {
+      allow get: if isSignedIn() && (isOwner(resource.data.studentId) || isOwner(resource.data.propertyOwnerId));
+      allow list: if isSignedIn() && request.query.where.propertyOwnerId == request.auth.uid;
+      allow create: if isSignedIn() && isNewSuggestionAuthor(request.resource.data) && request.resource.data.propertyOwnerId != null;
+      allow update: if isExistingOwner(resource.data.propertyOwnerId) && isSuggestionStudentImmutable(request.resource.data) && isSuggestionPropertyOwnerImmutable(request.resource.data);
+      allow delete: if isSignedIn() && (isOwner(resource.data.studentId) || isOwner(resource.data.propertyOwnerId));
     }
   }
 }
