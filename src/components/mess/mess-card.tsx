@@ -68,7 +68,7 @@ export function MessCard({ mess, layout = 'grid' }: MessCardProps) {
                         <MapPin className="w-4 h-4" />
                         <span>{mess.distanceFromCollege} km away</span>
                     </div>
-                    {mess.pricing.perMeal && (
+                    {mess.pricing.perMeal && mess.pricing.monthly && (
                         <div className="flex items-center gap-1.5">
                             <IndianRupee className="w-4 h-4" />
                             <span>{mess.pricing.perMeal}/meal</span>
@@ -78,12 +78,17 @@ export function MessCard({ mess, layout = 'grid' }: MessCardProps) {
             </div>
             <div className="mt-auto pt-4 flex items-end justify-between">
                 <div>
-                     {monthlyPrice && (
+                     {mess.pricing.monthly ? (
                         <p className="text-xl font-bold text-foreground">
-                            ₹{monthlyPrice.toLocaleString('en-IN')}
+                            ₹{mess.pricing.monthly.toLocaleString('en-IN')}
                             <span className="text-sm font-normal text-muted-foreground">/month</span>
                         </p>
-                    )}
+                    ) : mess.pricing.perMeal ? (
+                        <p className="text-xl font-bold text-foreground">
+                            ₹{mess.pricing.perMeal.toLocaleString('en-IN')}
+                            <span className="text-sm font-normal text-muted-foreground">/meal</span>
+                        </p>
+                    ) : null}
                 </div>
                 <div className="flex items-center gap-2">
                     <Button variant="outline" asChild>
@@ -140,13 +145,20 @@ export function MessCard({ mess, layout = 'grid' }: MessCardProps) {
             </CardDescription>
           </div>
         </CardContent>
-        {monthlyPrice && (
+        {(mess.pricing.monthly || mess.pricing.perMeal) && (
             <CardFooter className="flex justify-between items-center p-4 pt-0">
                 <div>
-                    <p className="text-xl font-bold text-foreground">
-                        ₹{monthlyPrice.toLocaleString('en-IN')}
-                        <span className="text-sm font-normal text-muted-foreground">/month</span>
-                    </p>
+                    {mess.pricing.monthly ? (
+                        <p className="text-xl font-bold text-foreground">
+                            ₹{mess.pricing.monthly.toLocaleString('en-IN')}
+                            <span className="text-sm font-normal text-muted-foreground">/month</span>
+                        </p>
+                    ) : mess.pricing.perMeal ? (
+                         <p className="text-xl font-bold text-foreground">
+                            ₹{mess.pricing.perMeal.toLocaleString('en-IN')}
+                            <span className="text-sm font-normal text-muted-foreground">/meal</span>
+                        </p>
+                    ) : null}
                 </div>
             </CardFooter>
         )}
