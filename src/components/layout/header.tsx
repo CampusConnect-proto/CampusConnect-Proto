@@ -29,18 +29,26 @@ export function Header() {
     { href: '/dashboard', label: 'Dashboard' },
   ];
 
-  const NavLink = ({ href, label, icon }: { href: string; label: string; icon?: React.ReactNode }) => (
-    <Link
-      href={href}
-      className={cn(
-        "flex items-center text-foreground/80 transition-colors hover:text-foreground",
-        pathname === href && "text-primary hover:text-primary font-semibold"
-      )}
-    >
-      {icon}
-      {label}
-    </Link>
-  );
+  const NavLink = ({ href, label }: { href: string; label: string; }) => {
+    const isActive = pathname === href;
+    return (
+      <Link
+        href={href}
+        className={cn(
+          "relative group flex items-center transition-colors",
+          isActive ? "text-primary font-semibold" : "text-foreground/80 hover:text-foreground"
+        )}
+      >
+        {label}
+        <span
+          className={cn(
+            "absolute left-0 bottom-[-5px] h-0.5 w-full origin-left scale-x-0 transform bg-primary transition-transform duration-300 ease-out group-hover:scale-x-100",
+            isActive && "scale-x-100"
+          )}
+        />
+      </Link>
+    );
+  };
 
   const handleLogout = () => {
     auth.signOut();
