@@ -3,20 +3,24 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Building2, Menu, PlusCircle, UserCircle, LayoutDashboard, ChevronDown } from 'lucide-react';
+import { Building2, Menu, ChevronDown } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { useUser } from '@/firebase';
+import { useUser, useAuth } from '@/firebase';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 export function Header() {
   const pathname = usePathname();
   const { user, isUserLoading } = useUser();
+  const auth = useAuth();
 
   const navLinks = [
     { href: '/', label: 'Home'},
@@ -38,6 +42,12 @@ export function Header() {
       {label}
     </Link>
   );
+
+  const handleLogout = () => {
+    auth.signOut();
+  };
+
+  const userInitial = user?.displayName?.charAt(0) || user?.email?.charAt(0) || 'U';
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -63,7 +73,7 @@ export function Header() {
                 </Button>
               </SheetTrigger>
               <SheetContent side="left">
-                <div className="p-4">
+                <div className="p-4 flex flex-col h-full">
                   <Link href="/" className="flex items-center gap-2 font-bold text-lg mb-8">
                      <Building2 className="h-6 w-6 text-primary" />
                      <span className="font-headline">Campus Connect</span>
@@ -78,11 +88,22 @@ export function Header() {
                           pathname === link.href && "text-primary hover:text-primary font-semibold"
                         )}
                       >
-                        {link.icon}
                         {link.label}
                       </Link>
                     ))}
                   </nav>
+                  <div className="mt-auto grid gap-4 text-lg font-medium">
+                    <DropdownMenuSeparator />
+                     {!isUserLoading && (!user || user.isAnonymous) && (
+                        <>
+                            <Link href="/login" className="text-foreground/80 transition-colors hover:text-foreground">Login</Link>
+                            <Link href="/signup" className="text-foreground/80 transition-colors hover:text-foreground">Sign Up</Link>
+                        </>
+                    )}
+                    {!isUserLoading && user && !user.isAnonymous && (
+                        <button onClick={handleLogout} className="text-left text-foreground/80 transition-colors hover:text-foreground">Logout</button>
+                    )}
+                  </div>
                 </div>
               </SheetContent>
             </Sheet>
@@ -106,7 +127,7 @@ export function Header() {
               </DropdownMenuContent>
             </DropdownMenu>
 
-            {!isUserLoading && !user && (
+            {!isUserLoading && (!user || user.isAnonymous) && (
               <>
                 <Button variant="ghost" asChild>
                   <Link href="/login">
@@ -119,6 +140,33 @@ export function Header() {
                   </Link>
                 </Button>
               </>
+            )}
+
+            {!isUserLoading && user && !user.isAnonymous && (
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+                            <Avatar className="h-10 w-10">
+                               <AvatarImage src={user.photoURL || `https://api.dicebear.com/7.x/initials/svg?seed=${user.displayName || user.email}`} />
+                               <AvatarFallback>{userInitial}</AvatarFallback>
+                            </Avatar>
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-56">
+                        <DropdownMenuLabel>
+                            <p className="font-medium">{user.displayName || 'User'}</p>
+                            <p className="text-xs text-muted-foreground">{user.email}</p>
+                        </DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem asChild>
+                           <Link href="/dashboard">Dashboard</Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={handleLogout}>
+                            Log out
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
             )}
           </div>
         </div>
