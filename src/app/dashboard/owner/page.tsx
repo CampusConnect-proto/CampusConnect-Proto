@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -20,14 +19,20 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
-import { collection, query, where } from 'firebase/firestore';
-import type { Property } from '@/lib/types';
+import { useUser, useFirestore, useCollection, useMemoFirebase, useDoc } from '@/firebase';
+import { collection, query, where, doc } from 'firebase/firestore';
+import type { Property, PropertyOwner } from '@/lib/types';
 import { useMemo } from "react";
 
 export default function OwnerDashboardPage() {
     const { user, isUserLoading } = useUser();
     const firestore = useFirestore();
+
+    const ownerDocRef = useMemoFirebase(() => {
+        if (!user || !firestore) return null;
+        return doc(firestore, 'propertyOwners', user.uid);
+    }, [user, firestore]);
+    const { data: owner, isLoading: isOwnerLoading } = useDoc<PropertyOwner>(ownerDocRef);
 
     const propertiesQuery = useMemoFirebase(() => {
         if (!user || !firestore) return null;
@@ -56,7 +61,7 @@ export default function OwnerDashboardPage() {
     }, [ownerProperties]);
     
 
-    const isLoading = isUserLoading || arePropertiesLoading;
+    const isLoading = isUserLoading || arePropertiesLoading || isOwnerLoading;
 
     if (isLoading) {
         return (
@@ -73,7 +78,7 @@ export default function OwnerDashboardPage() {
                     <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-8">
                         <div>
                             <h1 className="text-3xl font-bold font-headline">Owner Dashboard</h1>
-                            <p className="text-muted-foreground">Welcome back, {user?.displayName || 'Owner'}! Here's an overview of your portfolio.</p>
+                            <p className="text-muted-foreground">Welcome back, {owner?.name || user?.displayName || 'Owner'}! Here's an overview of your portfolio.</p>
                         </div>
                         <div className="flex gap-2">
                              <Button variant="outline">

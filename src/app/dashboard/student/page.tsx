@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -46,7 +45,7 @@ export default function StudentDashboardPage() {
                 <div className="container mx-auto py-8 px-4 md:px-6">
                      <div className="mb-8">
                         <h1 className="text-3xl font-bold font-headline">Student Dashboard</h1>
-                        <p className="text-muted-foreground">Welcome back, {user?.displayName || 'Student'}!</p>
+                        <p className="text-muted-foreground">Welcome back, {student?.name || user?.displayName || 'Student'}!</p>
                     </div>
                     <Card className="text-center py-16">
                         <CardHeader>
@@ -75,7 +74,7 @@ export default function StudentDashboardPage() {
                  <section>
                     <div className="mb-8">
                         <h1 className="text-3xl font-bold font-headline">Student Dashboard</h1>
-                        <p className="text-muted-foreground">Welcome back, {user?.displayName || 'Student'}! Here's an overview of your stay.</p>
+                        <p className="text-muted-foreground">Welcome back, {student?.name || user?.displayName || 'Student'}! Here's an overview of your stay.</p>
                     </div>
 
                     <div className="grid gap-8 lg:grid-cols-3">
