@@ -1,5 +1,4 @@
 {
-  "/properties/page": "app/properties/page.js",
   "/mess/page": "app/mess/page.js",
   "/mess/[id]/page": "app/mess/[id]/page.js",
   "/owner/add-property/page": "app/owner/add-property/page.js",

@@ -93,7 +93,7 @@ export function Header() {
              <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost">
-                  Partner with Us <ChevronDown className="ml-1 h-4 w-4" />
+                  Listing <ChevronDown className="ml-1 h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
