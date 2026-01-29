@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Home, Users, BedDouble, Calendar, Wallet, ShieldCheck, Phone, Building, Search, Loader2, Eye, Info } from "lucide-react";
+import { Home, Users, BedDouble, Calendar, Wallet, ShieldCheck, Phone, Building, Search, Loader2, Eye, Info, Wrench } from "lucide-react";
 import Link from 'next/link';
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
@@ -12,6 +12,7 @@ import type { Student, Property } from '@/lib/types';
 import { useMemo, useState } from "react";
 import { mockProperties } from "@/lib/mock-data";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Textarea } from "@/components/ui/textarea";
 
 
 export default function StudentDashboardPage() {
@@ -180,6 +181,23 @@ export default function StudentDashboardPage() {
                                     </Button>
                                 </CardContent>
                             </Card>
+
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle className="flex items-center gap-2">
+                                        <Wrench className="w-5 h-5"/>
+                                        Suggestions & Issues
+                                    </CardTitle>
+                                    <CardDescription>Report a problem or suggest an improvement for your room.</CardDescription>
+                                </CardHeader>
+                                <CardContent>
+                                    <form className="space-y-4">
+                                        <Textarea placeholder="e.g., The Wi-Fi is slow in my room, or it would be great to have a study table..." rows={4}/>
+                                        <Button className="w-full" disabled>Submit (Feature coming soon)</Button>
+                                    </form>
+                                </CardContent>
+                            </Card>
+
                              <Card>
                                 <CardHeader>
                                     <CardTitle>Quick Actions</CardTitle>

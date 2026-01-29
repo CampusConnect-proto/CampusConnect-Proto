@@ -1,8 +1,8 @@
 {
-  "/dashboard/page": "app/dashboard/page.js",
-  "/dashboard/owner/page": "app/dashboard/owner/page.js",
   "/login/page": "app/login/page.js",
   "/owner/add-property/page": "app/owner/add-property/page.js",
   "/properties/page": "app/properties/page.js",
+  "/signup/page": "app/signup/page.js",
+  "/dashboard/student/page": "app/dashboard/student/page.js",
   "/page": "app/page.js"
 }
