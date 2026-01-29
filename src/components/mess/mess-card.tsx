@@ -71,7 +71,7 @@ export function MessCard({ mess, layout = 'grid' }: MessCardProps) {
                     {mess.pricing.perMeal && mess.pricing.monthly && (
                         <div className="flex items-center gap-1.5">
                             <IndianRupee className="w-4 h-4" />
-                            <span>{mess.pricing.perMeal}/meal</span>
+                            <span>{mess.pricing.perMeal}/plate</span>
                         </div>
                     )}
                 </div>
@@ -86,7 +86,7 @@ export function MessCard({ mess, layout = 'grid' }: MessCardProps) {
                     ) : mess.pricing.perMeal ? (
                         <p className="text-xl font-bold text-foreground">
                             ₹{mess.pricing.perMeal.toLocaleString('en-IN')}
-                            <span className="text-sm font-normal text-muted-foreground">/meal</span>
+                            <span className="text-sm font-normal text-muted-foreground">/plate</span>
                         </p>
                     ) : null}
                 </div>
@@ -156,7 +156,7 @@ export function MessCard({ mess, layout = 'grid' }: MessCardProps) {
                     ) : mess.pricing.perMeal ? (
                          <p className="text-xl font-bold text-foreground">
                             ₹{mess.pricing.perMeal.toLocaleString('en-IN')}
-                            <span className="text-sm font-normal text-muted-foreground">/meal</span>
+                            <span className="text-sm font-normal text-muted-foreground">/plate</span>
                         </p>
                     ) : null}
                 </div>
