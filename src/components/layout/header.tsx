@@ -35,17 +35,11 @@ export function Header() {
       <Link
         href={href}
         className={cn(
-          "relative group flex items-center transition-colors",
-          isActive ? "text-primary font-semibold" : "text-foreground/80 hover:text-foreground"
+          "transition-colors",
+          isActive ? "text-primary font-semibold underline underline-offset-4" : "text-foreground/80 hover:text-primary"
         )}
       >
         {label}
-        <span
-          className={cn(
-            "absolute left-0 bottom-[-5px] h-0.5 w-full origin-left scale-x-0 transform bg-primary transition-transform duration-300 ease-out group-hover:scale-x-100",
-            isActive && "scale-x-100"
-          )}
-        />
       </Link>
     );
   };
