@@ -75,7 +75,7 @@
     {
       "id": "mess-1-1",
       "description": "A delicious Indian tiffin service meal.",
-      "imageUrl": "https://images.unsplash.com/photo-1589301760014-d929f39791e8?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      "imageUrl": "https://images.unsplash.com/photo-1604329262331-153a0a525459?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxJbmRpYW4lMjB0aWZmaW4lMjBzZXJ2aWNlfGVufDB8fHx8MTc2OTc5OTk5M3ww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "indian tiffin"
     },
     {
@@ -87,8 +87,8 @@
     {
       "id": "mess-3-1",
       "description": "Interior of a busy but clean university canteen.",
-      "imageUrl": "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      "imageHint": "restaurant interior"
+      "imageUrl": "https://images.unsplash.com/photo-1559560329-e4b17eb5726b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxjb2xsZWdlJTIwY2FudGVlbiUyMGluZGlhbnxlbnwwfHx8fDE3Njk3MDkxMjR8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "college canteen"
     }
   ]
 }
