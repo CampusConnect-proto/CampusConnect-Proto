@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Building2, ArrowRight, ShieldCheck, Search, Wallet, Star, Utensils } from 'lucide-react';
+import { Building2, ArrowRight, ShieldCheck, Search, Wallet, Star, Utensils, FileText, Phone } from 'lucide-react';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 export default function Home() {
@@ -102,36 +102,47 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="py-12 px-6 bg-muted/40">
-            <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
-                
-                <div className="bg-background rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow border border-gray-100 group">
-                    <div className="p-8">
-                        <div className="text-primary font-bold text-sm uppercase mb-2">Verified Hostels</div>
-                        <h3 className="text-2xl font-bold mb-4 font-headline">Explore Stays</h3>
-                        <p className="text-gray-600 mb-6">Find the perfect room near campus with student-verified reviews and transparent pricing.</p>
-                        <Button asChild>
-                            <Link href="/properties" className="flex items-center">
-                                Browse Rooms <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-                            </Link>
-                        </Button>
-                    </div>
-                </div>
-
-                <div className="bg-background rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow border border-gray-100 group">
-                    <div className="p-8">
-                        <div className="text-primary font-bold text-sm uppercase mb-2">Daily Meals</div>
-                        <h3 className="text-2xl font-bold mb-4 font-headline">Explore Mess</h3>
-                        <p className="text-gray-600 mb-6">Discover top-rated tiffin services and mess halls. View menus and subscription plans today.</p>
-                        <Button asChild>
-                            <Link href="/mess" className="flex items-center">
-                                View Menus <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-                            </Link>
-                        </Button>
-                    </div>
-                </div>
-
+        <section className="py-16 md:py-24 bg-background">
+          <div className="container mx-auto px-4 md:px-6">
+            <div className="text-center animate-fade-in-up">
+              <h2 className="text-3xl font-bold tracking-tight font-headline sm:text-4xl">
+                How It Works
+              </h2>
+              <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
+                Finding your student home and meals is as easy as 1, 2, 3.
+              </p>
             </div>
+            <div className="relative mt-16 max-w-5xl mx-auto">
+              <div className="absolute top-8 left-0 w-full h-px bg-border hidden md:block" />
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-16 relative">
+                
+                <div className="text-center flex flex-col items-center">
+                  <div className="mb-6 flex items-center justify-center rounded-full bg-background border-2 border-primary/50 shadow-lg h-16 w-16 text-primary z-10">
+                    <Search className="w-8 h-8" />
+                  </div>
+                  <h3 className="text-xl font-bold">1. Search & Discover</h3>
+                  <p className="mt-2 text-muted-foreground">Enter your college and browse a curated list of verified properties and mess services nearby.</p>
+                </div>
+
+                <div className="text-center flex flex-col items-center">
+                   <div className="mb-6 flex items-center justify-center rounded-full bg-background border-2 border-primary/50 shadow-lg h-16 w-16 text-primary z-10">
+                    <FileText className="w-8 h-8" />
+                  </div>
+                  <h3 className="text-xl font-bold">2. Compare & Decide</h3>
+                  <p className="mt-2 text-muted-foreground">Compare amenities, view photos, and read honest reviews from fellow students to make an informed choice.</p>
+                </div>
+
+                <div className="text-center flex flex-col items-center">
+                   <div className="mb-6 flex items-center justify-center rounded-full bg-background border-2 border-primary/50 shadow-lg h-16 w-16 text-primary z-10">
+                    <Phone className="w-8 h-8" />
+                  </div>
+                  <h3 className="text-xl font-bold">3. Connect & Book</h3>
+                  <p className="mt-2 text-muted-foreground">Contact property owners directly to schedule a visit or subscribe to a mess plan without any middlemen.</p>
+                </div>
+
+              </div>
+            </div>
+          </div>
         </section>
       </main>
     </div>
