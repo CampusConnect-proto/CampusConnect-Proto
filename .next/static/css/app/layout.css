@@ -915,6 +915,9 @@ video {
 .h-svh {
   height: 100svh;
 }
+.h-\[calc\(100vh-8rem\)\] {
+  height: calc(100vh - 8rem);
+}
 .max-h-96 {
   max-height: 24rem;
 }

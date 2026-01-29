@@ -1,7 +1,8 @@
 {
-  "/mess/page": "app/mess/page.js",
   "/mess/[id]/page": "app/mess/[id]/page.js",
   "/owner/add-property/page": "app/owner/add-property/page.js",
   "/owner/add-mess/page": "app/owner/add-mess/page.js",
-  "/page": "app/page.js"
+  "/page": "app/page.js",
+  "/dashboard/page": "app/dashboard/page.js",
+  "/signup/page": "app/signup/page.js"
 }

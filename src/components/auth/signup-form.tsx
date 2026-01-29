@@ -4,6 +4,12 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { doc, setDoc } from 'firebase/firestore';
+import { useAuth, useFirestore } from '@/firebase';
+import { useToast } from '@/hooks/use-toast';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -19,6 +25,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Separator } from '@/components/ui/separator';
 import { GoogleIcon } from '../icons';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Loader2 } from 'lucide-react';
 
 const signupSchema = z.object({
   name: z.string().min(1, 'Name is required.'),
@@ -30,6 +37,12 @@ const signupSchema = z.object({
 });
 
 export function SignupForm() {
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+  const auth = useAuth();
+  const firestore = useFirestore();
+  const { toast } = useToast();
+
   const form = useForm<z.infer<typeof signupSchema>>({
     resolver: zodResolver(signupSchema),
     defaultValues: {
@@ -40,9 +53,51 @@ export function SignupForm() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof signupSchema>) {
-    console.log('Signup attempt with:', values);
-    // In a real app, you would handle Firebase signup here
+  async function onSubmit(values: z.infer<typeof signupSchema>) {
+    setIsLoading(true);
+    try {
+      if (!firestore) throw new Error("Firestore is not available");
+
+      // Create user in Firebase Auth
+      const userCredential = await createUserWithEmailAndPassword(auth, values.email, values.password);
+      const user = userCredential.user;
+
+      // Create user profile document in Firestore
+      if (values.role === 'student') {
+        const studentDocRef = doc(firestore, 'students', user.uid);
+        await setDoc(studentDocRef, {
+          id: user.uid,
+          name: values.name,
+          email: values.email,
+          collegeName: 'Not specified', // Placeholder value
+        });
+      } else { // owner
+        const ownerDocRef = doc(firestore, 'propertyOwners', user.uid);
+        await setDoc(ownerDocRef, {
+          id: user.uid,
+          name: values.name,
+          email: values.email,
+          contactNumber: 'Not specified', // Placeholder value
+        });
+      }
+
+      toast({
+        title: "Account Created!",
+        description: "Welcome to Campus Connect. Redirecting you now...",
+      });
+
+      router.push('/dashboard');
+
+    } catch (error: any) {
+      console.error("Signup failed:", error);
+      toast({
+        variant: "destructive",
+        title: "Signup Failed",
+        description: error.message || "Could not create your account. Please try again.",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   return (
@@ -61,7 +116,7 @@ export function SignupForm() {
                 <FormItem>
                   <FormLabel>Full Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="John Doe" {...field} />
+                    <Input placeholder="John Doe" {...field} disabled={isLoading}/>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -74,7 +129,7 @@ export function SignupForm() {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input placeholder="you@example.com" {...field} />
+                    <Input placeholder="you@example.com" {...field} disabled={isLoading}/>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -87,7 +142,7 @@ export function SignupForm() {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input type="password" placeholder="••••••••" {...field} />
+                    <Input type="password" placeholder="••••••••" {...field} disabled={isLoading}/>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -104,6 +159,7 @@ export function SignupForm() {
                         onValueChange={field.onChange}
                         defaultValue={field.value}
                         className="flex space-x-4"
+                        disabled={isLoading}
                         >
                         <FormItem className="flex items-center space-x-2 space-y-0">
                             <FormControl>
@@ -123,13 +179,14 @@ export function SignupForm() {
                     </FormItem>
                 )}
             />
-            <Button type="submit" className="w-full">
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Create Account
             </Button>
           </form>
         </Form>
         <Separator className="my-6" />
-        <Button variant="outline" className="w-full">
+        <Button variant="outline" className="w-full" disabled>
           <GoogleIcon className="mr-2 h-4 w-4" />
           Sign up with Google
         </Button>

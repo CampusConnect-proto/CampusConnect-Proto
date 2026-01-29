@@ -4,6 +4,11 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { useAuth } from '@/firebase';
+import { useToast } from '@/hooks/use-toast';
+import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -18,6 +23,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { GoogleIcon } from '../icons';
+import { Loader2 } from 'lucide-react';
 
 const loginSchema = z.object({
   email: z.string().email('Please enter a valid email address.'),
@@ -25,6 +31,11 @@ const loginSchema = z.object({
 });
 
 export function LoginForm() {
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+  const auth = useAuth();
+  const { toast } = useToast();
+
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -33,9 +44,25 @@ export function LoginForm() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof loginSchema>) {
-    console.log('Login attempt with:', values);
-    // In a real app, you would handle Firebase login here
+  async function onSubmit(values: z.infer<typeof loginSchema>) {
+    setIsLoading(true);
+    try {
+      await signInWithEmailAndPassword(auth, values.email, values.password);
+      toast({
+        title: "Login Successful",
+        description: "Welcome back! Redirecting you now...",
+      });
+      router.push('/dashboard');
+    } catch (error: any) {
+      console.error("Login failed:", error);
+      toast({
+        variant: "destructive",
+        title: "Login Failed",
+        description: error.message || "Invalid email or password. Please try again.",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   return (
@@ -54,7 +81,7 @@ export function LoginForm() {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input placeholder="you@example.com" {...field} />
+                    <Input placeholder="you@example.com" {...field} disabled={isLoading} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -72,19 +99,20 @@ export function LoginForm() {
                         </Link>
                     </div>
                   <FormControl>
-                    <Input type="password" placeholder="••••••••" {...field} />
+                    <Input type="password" placeholder="••••••••" {...field} disabled={isLoading} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full">
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Sign In
             </Button>
           </form>
         </Form>
         <Separator className="my-6" />
-        <Button variant="outline" className="w-full">
+        <Button variant="outline" className="w-full" disabled>
           <GoogleIcon className="mr-2 h-4 w-4" />
           Sign in with Google
         </Button>
