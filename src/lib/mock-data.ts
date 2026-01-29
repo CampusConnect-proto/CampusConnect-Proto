@@ -7,7 +7,7 @@ export const mockMessListings: MessListing[] = [
     name: "Rohan's Tiffin Service",
     description: "Healthy and delicious home-cooked meals delivered to your doorstep. Specializing in North Indian cuisine.",
     distanceFromCollege: 1.2,
-    foodType: 'veg',
+    foodType: 'both',
     pricing: { monthly: 3500, perMeal: 120 },
     imageIds: ['mess-1-1'],
     averageRating: 4.8,
@@ -15,13 +15,41 @@ export const mockMessListings: MessListing[] = [
     address: 'Hauz Khas, New Delhi',
     ownerId: 'owner1',
     dailyMenu: {
-      monday: { breakfast: 'Aloo Paratha', lunch: 'Rajma Chawal', dinner: 'Shahi Paneer' },
-      tuesday: { breakfast: 'Poha', lunch: 'Kadhi Pakoda', dinner: 'Mix Veg' },
-      wednesday: { breakfast: 'Idli Sambhar', lunch: 'Chole Bhature', dinner: 'Dal Makhani' },
-      thursday: { breakfast: 'Upma', lunch: 'Aloo Gobi', dinner: 'Paneer Butter Masala' },
-      friday: { breakfast: 'Sandwich', lunch: 'Dal Fry', dinner: 'Kofta Curry' },
-      saturday: { breakfast: 'Cheela', lunch: 'Special Thali', dinner: 'Chana Masala' },
-      sunday: { breakfast: 'Puri Sabji', lunch: 'Special Thali', dinner: 'Paneer Lababdar' }
+      "monday": {
+        "breakfast": "Poha, Tea, Fruit",
+        "lunch": "Dal Tadka, Rice, Roti, Seasonal Veg, Curd",
+        "dinner": "Paneer Butter Masala, Roti, Salad"
+      },
+      "tuesday": {
+        "breakfast": "Aloo Paratha, Curd, Coffee",
+        "lunch": "Chole Bhature, Steamed Rice, Pickle",
+        "dinner": "Mix Veg Curry, Dal Fry, Roti, Rice"
+      },
+      "wednesday": {
+        "breakfast": "Idli Sambar, Coconut Chutney",
+        "lunch": "Rajma Masala, Jeera Rice, Roti, Salad",
+        "dinner": "Egg Curry (or Veg alternative), Rice, Roti"
+      },
+      "thursday": {
+        "breakfast": "Bread Omlette / Veg Sandwich, Tea",
+        "lunch": "Kadi Pakoda, Rice, Aloo Jeera, Roti",
+        "dinner": "Baingan Bharta, Dal, Roti, Gulab Jamun"
+      },
+      "friday": {
+        "breakfast": "Upma, Ginger Tea, Banana",
+        "lunch": "Veg Biryani, Raita, Papad",
+        "dinner": "Mushroom Masala, Roti, Dal, Rice"
+      },
+      "saturday": {
+        "breakfast": "Puri Bhaji, Tea",
+        "lunch": "Aloo Matar, Dal, Rice, Roti",
+        "dinner": "Special Thali: Paneer, Dal Makhani, Naan, Sweet"
+      },
+      "sunday": {
+        "breakfast": "Misal Pav / Cornflakes, Milk",
+        "lunch": "Special Chicken Curry (or Shahi Paneer), Pulao, Roti",
+        "dinner": "Light Khichdi, Kadhi, Papad"
+      }
     }
   },
   {
