@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 import { useAuth } from '@/firebase';
 import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
@@ -22,8 +22,6 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
-import { GoogleIcon } from '../icons';
 import { Loader2 } from 'lucide-react';
 
 const loginSchema = z.object({
@@ -33,7 +31,6 @@ const loginSchema = z.object({
 
 export function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
-  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const router = useRouter();
   const auth = useAuth();
   const { toast } = useToast();
@@ -67,30 +64,6 @@ export function LoginForm() {
     }
   }
 
-  async function handleGoogleSignIn() {
-    setIsGoogleLoading(true);
-    try {
-        const provider = new GoogleAuthProvider();
-        await signInWithPopup(auth, provider);
-        
-        toast({
-            title: "Login Successful",
-            description: "Welcome back! Redirecting you now...",
-        });
-        router.push('/dashboard');
-
-    } catch (error: any) {
-        console.error("Google sign in failed:", error);
-        toast({
-            variant: "destructive",
-            title: "Google Sign-In Failed",
-            description: error.message || "Could not sign in with Google. Please try again.",
-        });
-    } finally {
-        setIsGoogleLoading(false);
-    }
-  }
-
 
   return (
     <Card className="w-full max-w-md mx-auto">
@@ -108,7 +81,7 @@ export function LoginForm() {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input placeholder="you@example.com" {...field} disabled={isLoading || isGoogleLoading} />
+                    <Input placeholder="you@example.com" {...field} disabled={isLoading} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -126,23 +99,18 @@ export function LoginForm() {
                         </Link>
                     </div>
                   <FormControl>
-                    <Input type="password" placeholder="••••••••" {...field} disabled={isLoading || isGoogleLoading} />
+                    <Input type="password" placeholder="••••••••" {...field} disabled={isLoading} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full" disabled={isLoading || isGoogleLoading}>
+            <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Sign In
             </Button>
           </form>
         </Form>
-        <Separator className="my-6" />
-        <Button variant="outline" className="w-full" onClick={handleGoogleSignIn} disabled={isLoading || isGoogleLoading}>
-          {isGoogleLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <GoogleIcon className="mr-2 h-4 w-4" />}
-          Sign in with Google
-        </Button>
         <div className="mt-6 text-center text-sm">
           Don't have an account?{' '}
           <Link href="/signup" className="font-semibold text-primary hover:underline">

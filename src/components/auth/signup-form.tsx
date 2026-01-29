@@ -7,8 +7,8 @@ import { z } from 'zod';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, updateProfile } from 'firebase/auth';
-import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { doc, setDoc } from 'firebase/firestore';
 import { useAuth, useFirestore } from '@/firebase';
 import { useToast } from '@/hooks/use-toast';
 
@@ -23,8 +23,6 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
-import { GoogleIcon } from '../icons';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Loader2 } from 'lucide-react';
 
@@ -39,7 +37,6 @@ const signupSchema = z.object({
 
 export function SignupForm() {
   const [isLoading, setIsLoading] = useState(false);
-  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const router = useRouter();
   const auth = useAuth();
   const firestore = useFirestore();
@@ -107,65 +104,6 @@ export function SignupForm() {
     }
   }
 
-  async function handleGoogleSignUp() {
-    setIsGoogleLoading(true);
-    try {
-        if (!firestore) throw new Error("Firestore is not available");
-
-        const provider = new GoogleAuthProvider();
-        const result = await signInWithPopup(auth, provider);
-        const user = result.user;
-
-        // Check if user document already exists
-        const studentDocRef = doc(firestore, 'students', user.uid);
-        const ownerDocRef = doc(firestore, 'propertyOwners', user.uid);
-        const studentSnap = await getDoc(studentDocRef);
-        const ownerSnap = await getDoc(ownerDocRef);
-
-        if (studentSnap.exists() || ownerSnap.exists()) {
-            // User already exists, just sign them in.
-            toast({
-                title: "Login Successful",
-                description: "Welcome back!",
-            });
-        } else {
-             // New user, create a document based on the selected role
-            const role = form.getValues('role');
-            if (role === 'student') {
-                await setDoc(studentDocRef, {
-                    id: user.uid,
-                    name: user.displayName || 'New User',
-                    email: user.email,
-                    collegeName: 'Not specified',
-                });
-            } else { // owner
-                await setDoc(ownerDocRef, {
-                    id: user.uid,
-                    name: user.displayName || 'New User',
-                    email: user.email,
-                    contactNumber: 'Not specified',
-                });
-            }
-             toast({
-                title: "Account Created!",
-                description: "Welcome to Campus Connect.",
-            });
-        }
-
-        router.push('/dashboard');
-
-    } catch (error: any) {
-        console.error("Google Signup failed:", error);
-        toast({
-            variant: "destructive",
-            title: "Google Signup Failed",
-            description: error.message || "Could not sign up with Google. Please try again.",
-        });
-    } finally {
-        setIsGoogleLoading(false);
-    }
-  }
-
   return (
     <Card className="w-full max-w-md mx-auto">
       <CardHeader>
@@ -182,7 +120,7 @@ export function SignupForm() {
                 <FormItem>
                   <FormLabel>Full Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="John Doe" {...field} disabled={isLoading || isGoogleLoading}/>
+                    <Input placeholder="John Doe" {...field} disabled={isLoading}/>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -195,7 +133,7 @@ export function SignupForm() {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input placeholder="you@example.com" {...field} disabled={isLoading || isGoogleLoading}/>
+                    <Input placeholder="you@example.com" {...field} disabled={isLoading}/>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -208,7 +146,7 @@ export function SignupForm() {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input type="password" placeholder="••••••••" {...field} disabled={isLoading || isGoogleLoading}/>
+                    <Input type="password" placeholder="••••••••" {...field} disabled={isLoading}/>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -225,7 +163,7 @@ export function SignupForm() {
                         onValueChange={field.onChange}
                         defaultValue={field.value}
                         className="flex space-x-4"
-                        disabled={isLoading || isGoogleLoading}
+                        disabled={isLoading}
                         >
                         <FormItem className="flex items-center space-x-2 space-y-0">
                             <FormControl>
@@ -245,17 +183,12 @@ export function SignupForm() {
                     </FormItem>
                 )}
             />
-            <Button type="submit" className="w-full" disabled={isLoading || isGoogleLoading}>
+            <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Create Account
             </Button>
           </form>
         </Form>
-        <Separator className="my-6" />
-        <Button variant="outline" className="w-full" onClick={handleGoogleSignUp} disabled={isLoading || isGoogleLoading}>
-            {isGoogleLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <GoogleIcon className="mr-2 h-4 w-4" />}
-            Sign up with Google
-        </Button>
         <div className="mt-6 text-center text-sm">
           Already have an account?{' '}
           <Link href="/login" className="font-semibold text-primary hover:underline">
