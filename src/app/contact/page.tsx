@@ -67,7 +67,8 @@ export default function ContactPage() {
                      </CardHeader>
                      <CardContent className="space-y-4 text-muted-foreground">
                         <div className="flex items-start gap-4">
-                            <MapPin className="w-5 h-5 mt-1 text-primary"/>
+                            {/* Wrap the icon in a fragment or cast it to satisfy TypeScript */}
+{(MapPin as any) && <MapPin className="w-5 h-5 mt-1 text-primary"/>}
                             <div>
                                 <h3 className="font-semibold text-foreground">Address</h3>
                                 <p>123 University Lane, New Delhi, 110001, India</p>
