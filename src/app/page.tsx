@@ -1,4 +1,3 @@
-
 'use client';
 
 import Image from 'next/image';
@@ -79,32 +78,26 @@ export default function Home() {
           </div>
         </section>
 
-        <section id="features" className="py-16 md:py-24 bg-background">
+        <section id="features" className="py-16 md:py-24 bg-muted/40">
           <div className="container mx-auto px-4 md:px-6">
             <div className="text-center animate-fade-in-up">
               <h2 className="text-3xl font-bold tracking-tight font-headline sm:text-4xl">
                 Why Choose Campus Connect?
               </h2>
-              <p className="mt-4 text-lg text-muted-foreground">
+              <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
                 We make finding student housing and meals simple, safe, and stress-free.
               </p>
             </div>
-            <div className="relative mt-12 w-full overflow-hidden">
-                <div className="flex animate-marquee hover:pause">
-                    {[...features, ...features].map((feature, index) => (
-                         <div key={index} className="flex-shrink-0 w-full sm:w-1/2 lg:w-1/4 p-4">
-                             <div className="flex flex-col items-center text-center h-full">
-                                <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
-                                    {feature.icon}
-                                </div>
-                                <h3 className="text-xl font-bold">{feature.title}</h3>
-                                <p className="mt-2 text-muted-foreground flex-grow">
-                                    {feature.description}
-                                </p>
-                            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-12 max-w-5xl mx-auto">
+                {features.map((feature) => (
+                     <div key={feature.title} className="bg-background rounded-xl p-8 text-center shadow-md transition-all duration-300 hover:shadow-xl hover:-translate-y-1.5 border">
+                        <div className="mb-5 inline-flex items-center justify-center rounded-full bg-primary/10 p-4 ring-8 ring-primary/5">
+                            {feature.icon}
                         </div>
-                    ))}
-                </div>
+                        <h3 className="text-xl font-bold">{feature.title}</h3>
+                        <p className="mt-2 text-muted-foreground">{feature.description}</p>
+                    </div>
+                ))}
             </div>
           </div>
         </section>
