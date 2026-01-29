@@ -1,21 +1,12 @@
+
 'use client';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Home, Users, BedDouble, Calendar, Wallet, ShieldCheck, Phone, MessageSquare, Wrench, Building, Search, Loader2 } from "lucide-react";
+import { Home, Users, BedDouble, Calendar, Wallet, ShieldCheck, Phone, Building, Search, Loader2 } from "lucide-react";
 import Link from 'next/link';
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { Separator } from "@/components/ui/separator";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { useUser, useFirestore, useDoc, useMemoFirebase } from '@/firebase';
 import { doc } from 'firebase/firestore';
 import type { Student, Property } from '@/lib/types';
@@ -48,10 +39,6 @@ export default function StudentDashboardPage() {
             </div>
         )
     }
-
-    const nextDueDate = new Date();
-    nextDueDate.setMonth(nextDueDate.getMonth() + 1);
-    nextDueDate.setDate(5);
 
     if (!bookedProperty) {
         return (
@@ -133,53 +120,6 @@ export default function StudentDashboardPage() {
                                     </div>
                                 </CardContent>
                             </Card>
-                             <Card>
-                                <CardHeader>
-                                    <CardTitle>Maintenance Requests</CardTitle>
-                                    <CardDescription>Report and track issues in your room or common areas.</CardDescription>
-                                </CardHeader>
-                                <CardContent>
-                                    <form className="space-y-4">
-                                        <div className="grid sm:grid-cols-2 gap-4">
-                                        <Select>
-                                            <SelectTrigger>
-                                                <SelectValue placeholder="Select Issue Type" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem value="plumbing">Plumbing</SelectItem>
-                                                <SelectItem value="electrical">Electrical</SelectItem>
-                                                <SelectItem value="appliance">Appliance</SelectItem>
-                                                <SelectItem value="other">Other</SelectItem>
-                                            </SelectContent>
-                                        </Select>
-                                         <Select>
-                                            <SelectTrigger>
-                                                <SelectValue placeholder="Select Urgency" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem value="low">Low</SelectItem>
-                                                <SelectItem value="medium">Medium</SelectItem>
-                                                <SelectItem value="high">High</SelectItem>
-                                            </SelectContent>
-                                        </Select>
-                                        </div>
-                                        <Textarea placeholder="Describe the issue in detail..." />
-                                        <Button className="w-full sm:w-auto">
-                                            <Wrench className="w-4 h-4 mr-2" />
-                                            Submit Request
-                                        </Button>
-                                    </form>
-                                     <Separator className="my-6"/>
-                                     <h4 className="font-semibold mb-4">Active Requests</h4>
-                                     <Alert>
-                                        <ShieldCheck className="h-4 w-4" />
-                                        <AlertTitle>No active requests</AlertTitle>
-                                        <AlertDescription>
-                                            You have no pending maintenance requests.
-                                        </AlertDescription>
-                                     </Alert>
-                                </CardContent>
-                            </Card>
                         </div>
                         <div className="space-y-8">
                             <Card>
@@ -193,11 +133,11 @@ export default function StudentDashboardPage() {
                                     </div>
                                     <div className="flex justify-between items-center">
                                         <span className="text-muted-foreground flex items-center gap-2"><Calendar className="w-4 h-4" /> Next Due Date</span>
-                                        <span className="font-semibold">{nextDueDate.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
+                                        <span className="font-semibold">5th of next month</span>
                                     </div>
-                                    <Button className="w-full">
+                                    <Button className="w-full" disabled>
                                         <Wallet className="w-4 h-4 mr-2" />
-                                        Pay Now
+                                        Pay Now (Feature coming soon)
                                     </Button>
                                 </CardContent>
                             </Card>
@@ -207,16 +147,8 @@ export default function StudentDashboardPage() {
                                 </CardHeader>
                                 <CardContent className="grid grid-cols-2 gap-4">
                                     <Button variant="outline" className="h-20 flex-col gap-1">
-                                        <Wrench className="w-6 h-6"/>
-                                        <span>Report Issue</span>
-                                    </Button>
-                                    <Button variant="outline" className="h-20 flex-col gap-1">
                                         <Phone className="w-6 h-6"/>
                                         <span>Contact Owner</span>
-                                    </Button>
-                                    <Button variant="outline" className="h-20 flex-col gap-1">
-                                        <MessageSquare className="w-6 h-6"/>
-                                        <span>Community</span>
                                     </Button>
                                     <Button variant="outline" className="h-20 flex-col gap-1" asChild>
                                         <Link href="/properties" className="flex flex-col items-center justify-center h-full">

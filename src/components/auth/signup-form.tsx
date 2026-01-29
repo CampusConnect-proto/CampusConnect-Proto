@@ -7,7 +7,7 @@ import { z } from 'zod';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, updateProfile } from 'firebase/auth';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { useAuth, useFirestore } from '@/firebase';
 import { useToast } from '@/hooks/use-toast';
@@ -63,6 +63,11 @@ export function SignupForm() {
       // Create user in Firebase Auth
       const userCredential = await createUserWithEmailAndPassword(auth, values.email, values.password);
       const user = userCredential.user;
+
+      // Update the user's profile with their name
+      await updateProfile(user, {
+        displayName: values.name,
+      });
 
       // Create user profile document in Firestore
       if (values.role === 'student') {
@@ -261,5 +266,3 @@ export function SignupForm() {
     </Card>
   );
 }
-
-    

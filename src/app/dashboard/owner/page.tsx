@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -19,18 +20,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
 import { collection, query, where } from 'firebase/firestore';
 import type { Property } from '@/lib/types';
 import { useMemo } from "react";
-
-const recentActivities = [
-    { name: 'Rohan Sharma', activity: 'paid rent for Prop1', time: '5m ago', image: 'Rohan Sharma' },
-    { name: 'Priya Singh', activity: 'sent a message', time: '1h ago', image: 'Priya Singh' },
-    { name: 'Ankit Kumar', activity: 'booked a tour for Prop2', time: '3h ago', image: 'Ankit Kumar'},
-    { name: 'New Property', activity: 'pending verification', time: '1d ago', image: 'NP' },
-]
 
 export default function OwnerDashboardPage() {
     const { user, isUserLoading } = useUser();
@@ -146,19 +139,10 @@ export default function OwnerDashboardPage() {
                                     <CardDescription>Latest updates from tenants and properties.</CardDescription>
                                 </CardHeader>
                                 <CardContent>
-                                    <div className="space-y-4">
-                                        {recentActivities.map(activity => (
-                                            <div key={activity.name} className="flex items-center gap-4">
-                                                <Avatar className="h-9 w-9">
-                                                     <AvatarImage src={`https://api.dicebear.com/7.x/initials/svg?seed=${activity.image}`} />
-                                                    <AvatarFallback>{activity.image.charAt(0)}</AvatarFallback>
-                                                </Avatar>
-                                                <div className="flex-1 text-sm">
-                                                    <p><span className="font-semibold">{activity.name}</span> {activity.activity}</p>
-                                                </div>
-                                                <time className="text-xs text-muted-foreground">{activity.time}</time>
-                                            </div>
-                                        ))}
+                                    <div className="text-center text-muted-foreground py-8">
+                                        <Bell className="w-10 h-10 mx-auto mb-4 text-muted-foreground/50"/>
+                                        <p className="font-semibold">No Recent Activity</p>
+                                        <p className="text-sm">Updates from tenants and properties will appear here.</p>
                                     </div>
                                 </CardContent>
                             </Card>
