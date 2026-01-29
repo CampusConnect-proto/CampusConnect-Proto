@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useMemo, useCallback } from 'react';
@@ -23,7 +22,7 @@ export default function MessPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('popularity');
   const [filters, setFilters] = useState({
-    priceRange: { min: 0, max: 5000 },
+    price: 5000,
     foodType: 'any',
   });
 
@@ -40,8 +39,8 @@ export default function MessPage() {
         mess.name.toLowerCase().includes(searchLower) ||
         mess.address.toLowerCase().includes(searchLower);
 
-      const monthlyPrice = mess.pricing.monthly || 0;
-      const matchesPrice = monthlyPrice >= filters.priceRange.min && monthlyPrice <= filters.priceRange.max;
+      const monthlyPrice = mess.pricing.monthly;
+      const matchesPrice = monthlyPrice !== undefined ? monthlyPrice <= filters.price : true;
       const matchesFoodType = filters.foodType === 'any' || mess.foodType === filters.foodType;
 
       return hasImage && matchesSearch && matchesPrice && matchesFoodType;
@@ -139,5 +138,3 @@ export default function MessPage() {
     </div>
   );
 }
-
-    

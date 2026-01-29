@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -6,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Input } from '../ui/input';
+import { Slider } from '@/components/ui/slider';
 
 interface MessSearchFiltersProps {
   onFilterChange: (filters: any) => void;
@@ -27,14 +26,13 @@ export function MessSearchFilters({ onFilterChange, initialFilters }: MessSearch
     setFilters(prev => ({ ...prev, foodType: value }));
   };
 
-  const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>, field: 'min' | 'max') => {
-    const value = e.target.value ? parseInt(e.target.value, 10) : (field === 'min' ? 0 : 5000);
-    setFilters(prev => ({ ...prev, priceRange: { ...prev.priceRange, [field]: value } }));
+  const handlePriceChange = (value: number[]) => {
+    setFilters(prev => ({ ...prev, price: value[0] }));
   };
   
   const clearFilters = () => {
     const clearedFilters = {
-       priceRange: { min: 0, max: 5000 },
+       price: 5000,
        foodType: 'any',
     };
     setFilters(clearedFilters);
@@ -48,12 +46,19 @@ export function MessSearchFilters({ onFilterChange, initialFilters }: MessSearch
       </CardHeader>
       <CardContent className="space-y-6">
         
-        <div className="space-y-2">
-            <Label>Monthly Price Range</Label>
-            <div className="flex gap-2">
-                <Input type="number" placeholder="Min" value={filters.priceRange.min || ''} onChange={(e) => handlePriceChange(e, 'min')} />
-                <Input type="number" placeholder="Max" value={filters.priceRange.max || ''} onChange={(e) => handlePriceChange(e, 'max')} />
+        <div className="space-y-4">
+            <div className="flex justify-between items-center">
+                <Label htmlFor="price">Max Monthly Price</Label>
+                <span className="text-sm font-medium">₹{filters.price.toLocaleString('en-IN')}</span>
             </div>
+            <Slider
+                id="price"
+                min={1000}
+                max={5000}
+                step={500}
+                value={[filters.price]}
+                onValueChange={handlePriceChange}
+            />
         </div>
 
         <div className="space-y-2">
