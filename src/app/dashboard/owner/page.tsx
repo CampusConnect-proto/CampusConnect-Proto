@@ -311,7 +311,7 @@ export default function OwnerDashboardPage() {
                                                     </div>
                                                 </TableCell>
                                                 <TableCell>
-                                                    <Badge variant={prop.currentAvailability > 0 ? 'secondary' : 'default'} className={prop.currentAvailability > 0 ? 'bg-green-100 text-green-800' : 'bg-orange-100 text-orange-800'}>
+                                                    <Badge variant={prop.currentAvailability > 0 ? 'secondary' : 'default'} className={prop.currentAvailability > 0 ? 'bg-gray-100 text-gray-800' : 'bg-orange-100 text-orange-800'}>
                                                         {prop.currentAvailability > 0 ? 'Available' : 'Full'}
                                                     </Badge>
                                                 </TableCell>

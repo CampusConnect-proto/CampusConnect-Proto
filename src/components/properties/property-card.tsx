@@ -38,7 +38,7 @@ export function PropertyCard({ property, layout = 'grid' }: PropertyCardProps) {
                 )}
                 <div className="absolute top-2 left-2">
                     <Badge variant="secondary" className="bg-white/80 backdrop-blur-sm">
-                        <ShieldCheck className="w-3 h-3 mr-1 text-green-600"/>
+                        <ShieldCheck className="w-3 h-3 mr-1 text-primary"/>
                         Company-Serviced
                     </Badge>
                 </div>
@@ -115,7 +115,7 @@ export function PropertyCard({ property, layout = 'grid' }: PropertyCardProps) {
             )}
              <div className="absolute top-2 left-2">
                 <Badge variant="secondary" className="bg-white/80 backdrop-blur-sm">
-                    <ShieldCheck className="w-3 h-3 mr-1 text-green-600"/>
+                    <ShieldCheck className="w-3 h-3 mr-1 text-primary"/>
                     Company-Serviced
                 </Badge>
             </div>
