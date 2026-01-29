@@ -2,9 +2,8 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Home, Users, BedDouble, Calendar, Wallet, ShieldCheck, Phone, MessageSquare, Wrench, Building } from "lucide-react";
+import { Home, Users, BedDouble, Calendar, Wallet, ShieldCheck, Phone, MessageSquare, Wrench, Building, Search, Loader2 } from "lucide-react";
 import Link from 'next/link';
-import { mockProperties } from '@/lib/mock-data';
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Separator } from "@/components/ui/separator";
@@ -17,14 +16,71 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
-
+import { useUser, useFirestore, useDoc, useMemoFirebase } from '@/firebase';
+import { doc } from 'firebase/firestore';
+import type { Student, Property } from '@/lib/types';
 
 export default function StudentDashboardPage() {
-    const bookedProperty = mockProperties[0];
-    const studentImage = PlaceHolderImages.find(p => p.id === bookedProperty.imageIds[0]);
+    const { user, isUserLoading } = useUser();
+    const firestore = useFirestore();
+
+    const studentDocRef = useMemoFirebase(() => {
+        if (!user || !firestore) return null;
+        return doc(firestore, 'students', user.uid);
+    }, [user, firestore]);
+    const { data: student, isLoading: isStudentLoading } = useDoc<Student>(studentDocRef);
+
+    const propertyDocRef = useMemoFirebase(() => {
+        if (!student?.bookedPropertyId || !firestore) return null;
+        return doc(firestore, 'properties', student.bookedPropertyId);
+    }, [student, firestore]);
+    const { data: bookedProperty, isLoading: isPropertyLoading } = useDoc<Property>(propertyDocRef);
+
+    const isLoading = isUserLoading || isStudentLoading || (student?.bookedPropertyId && isPropertyLoading);
+
+    if (isLoading) {
+        return (
+            <div className="flex h-[calc(100vh-8rem)] w-full items-center justify-center">
+                 <div className="flex flex-col items-center gap-4">
+                    <Loader2 className="h-12 w-12 animate-spin text-primary" />
+                    <p className="text-muted-foreground">Loading your dashboard...</p>
+                </div>
+            </div>
+        )
+    }
+
     const nextDueDate = new Date();
     nextDueDate.setMonth(nextDueDate.getMonth() + 1);
     nextDueDate.setDate(5);
+
+    if (!bookedProperty) {
+        return (
+             <div className="bg-muted/40 min-h-screen">
+                <div className="container mx-auto py-8 px-4 md:px-6">
+                     <div className="mb-8">
+                        <h1 className="text-3xl font-bold font-headline">Student Dashboard</h1>
+                        <p className="text-muted-foreground">Welcome back, {user?.displayName || 'Student'}!</p>
+                    </div>
+                    <Card className="text-center py-16">
+                        <CardHeader>
+                            <CardTitle>No Property Booked Yet</CardTitle>
+                            <CardDescription>It looks like you haven't booked a property. Let's find your perfect student home!</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                             <Button asChild size="lg">
+                                <Link href="/properties">
+                                    <Search className="w-4 h-4 mr-2"/>
+                                    Explore Properties
+                                </Link>
+                            </Button>
+                        </CardContent>
+                    </Card>
+                </div>
+            </div>
+        )
+    }
+
+    const studentImage = PlaceHolderImages.find(p => p.id === bookedProperty.imageIds[0]);
 
     return (
         <div className="bg-muted/40 min-h-screen">
@@ -32,7 +88,7 @@ export default function StudentDashboardPage() {
                  <section>
                     <div className="mb-8">
                         <h1 className="text-3xl font-bold font-headline">Student Dashboard</h1>
-                        <p className="text-muted-foreground">Welcome back, Rohan! Here's an overview of your stay.</p>
+                        <p className="text-muted-foreground">Welcome back, {user?.displayName || 'Student'}! Here's an overview of your stay.</p>
                     </div>
 
                     <div className="grid gap-8 lg:grid-cols-3">

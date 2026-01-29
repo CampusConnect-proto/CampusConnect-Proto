@@ -77,6 +77,8 @@ export interface Student {
   name: string;
   email: string;
   collegeName: string;
+  bookedPropertyId?: string;
+  bookedMessId?: string;
 }
 
 export interface PropertyOwner {

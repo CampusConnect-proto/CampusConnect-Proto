@@ -2,10 +2,9 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { DollarSign, Home, Users, PlusCircle, Eye, TrendingUp, Bell, CircleDollarSign } from "lucide-react";
+import { DollarSign, Home, Users, PlusCircle, Eye, TrendingUp, Bell, CircleDollarSign, Loader2 } from "lucide-react";
 import Link from 'next/link';
 import { OwnerEarningsChart } from '@/components/dashboard/owner/owner-earnings-chart';
-import { mockProperties } from '@/lib/mock-data';
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Badge } from "@/components/ui/badge";
@@ -21,6 +20,10 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
+import { collection, query, where } from 'firebase/firestore';
+import type { Property } from '@/lib/types';
+import { useMemo } from "react";
 
 const recentActivities = [
     { name: 'Rohan Sharma', activity: 'paid rent for Prop1', time: '5m ago', image: 'Rohan Sharma' },
@@ -30,13 +33,45 @@ const recentActivities = [
 ]
 
 export default function OwnerDashboardPage() {
-    const ownerProperties = mockProperties.slice(0, 3);
-    const totalProperties = ownerProperties.length;
-    const totalRent = ownerProperties.reduce((acc, prop) => acc + prop.rent, 0);
-    const totalCapacity = ownerProperties.reduce((acc, prop) => acc + prop.totalCapacity, 0);
-    const totalAvailability = ownerProperties.reduce((acc, prop) => acc + prop.currentAvailability, 0);
-    const occupancy = totalCapacity > 0 ? ((totalCapacity - totalAvailability) / totalCapacity) * 100 : 0;
+    const { user, isUserLoading } = useUser();
+    const firestore = useFirestore();
 
+    const propertiesQuery = useMemoFirebase(() => {
+        if (!user || !firestore) return null;
+        return query(collection(firestore, 'properties'), where('propertyOwnerId', '==', user.uid));
+    }, [user, firestore]);
+
+    const { data: ownerProperties, isLoading: arePropertiesLoading } = useCollection<Property>(propertiesQuery);
+    
+    const {
+        totalProperties,
+        totalRent,
+        totalCapacity,
+        totalAvailability,
+        occupancy
+    } = useMemo(() => {
+        if (!ownerProperties) {
+            return { totalProperties: 0, totalRent: 0, totalCapacity: 0, totalAvailability: 0, occupancy: 0 };
+        }
+        const totalProperties = ownerProperties.length;
+        const totalRent = ownerProperties.reduce((acc, prop) => acc + prop.rent, 0);
+        const totalCapacity = ownerProperties.reduce((acc, prop) => acc + prop.totalCapacity, 0);
+        const totalAvailability = ownerProperties.reduce((acc, prop) => acc + prop.currentAvailability, 0);
+        const occupancy = totalCapacity > 0 ? ((totalCapacity - totalAvailability) / totalCapacity) * 100 : 0;
+        
+        return { totalProperties, totalRent, totalCapacity, totalAvailability, occupancy };
+    }, [ownerProperties]);
+    
+
+    const isLoading = isUserLoading || arePropertiesLoading;
+
+    if (isLoading) {
+        return (
+            <div className="flex h-[calc(100vh-8rem)] w-full items-center justify-center">
+                <Loader2 className="h-12 w-12 animate-spin text-primary" />
+            </div>
+        )
+    }
 
     return (
         <div className="bg-muted/40 min-h-screen">
@@ -45,7 +80,7 @@ export default function OwnerDashboardPage() {
                     <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-8">
                         <div>
                             <h1 className="text-3xl font-bold font-headline">Owner Dashboard</h1>
-                            <p className="text-muted-foreground">Welcome back! Here's an overview of your portfolio.</p>
+                            <p className="text-muted-foreground">Welcome back, {user?.displayName || 'Owner'}! Here's an overview of your portfolio.</p>
                         </div>
                         <div className="flex gap-2">
                              <Button variant="outline">
@@ -97,11 +132,11 @@ export default function OwnerDashboardPage() {
                     <div className="grid gap-8 lg:grid-cols-5">
                         <Card className="lg:col-span-3">
                             <CardHeader>
-                                <CardTitle>Monthly Earnings</CardTitle>
-                                <CardDescription>Your estimated rent collection over the year.</CardDescription>
+                                <CardTitle>Rent by Property</CardTitle>
+                                <CardDescription>A breakdown of your monthly rent per property.</CardDescription>
                             </CardHeader>
                             <CardContent>
-                                <OwnerEarningsChart />
+                                <OwnerEarningsChart properties={ownerProperties} />
                             </CardContent>
                         </Card>
                         <div className="lg:col-span-2 space-y-8">
@@ -176,8 +211,8 @@ export default function OwnerDashboardPage() {
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
-                                    {ownerProperties.map(prop => {
-                                        const image = PlaceHolderImages.find(p => p.id === prop.imageIds[0]);
+                                    {ownerProperties && ownerProperties.map(prop => {
+                                        const image = prop.imageIds.length > 0 ? PlaceHolderImages.find(p => p.id === prop.imageIds[0]) : null;
                                         return (
                                              <TableRow key={prop.id}>
                                                 <TableCell className="font-medium">
@@ -220,6 +255,17 @@ export default function OwnerDashboardPage() {
                                     })}
                                 </TableBody>
                             </Table>
+                             {(!ownerProperties || ownerProperties.length === 0) && (
+                                <div className="text-center py-12">
+                                    <p className="text-muted-foreground">You haven't listed any properties yet.</p>
+                                    <Button asChild className="mt-4">
+                                        <Link href="/owner/add-property">
+                                            <PlusCircle className="mr-2 h-4 w-4" />
+                                            List Your First Property
+                                        </Link>
+                                    </Button>
+                                </div>
+                            )}
                         </CardContent>
                     </Card>
                 </section>
