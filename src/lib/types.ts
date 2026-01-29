@@ -63,7 +63,8 @@ export interface Property {
 
 export interface Review {
   id: string;
-  propertyId: string;
+  propertyId?: string;
+  messId?: string;
   studentId: string;
   studentName: string;
   rating: number; // 1-5
@@ -84,3 +85,5 @@ export interface PropertyOwner {
   email: string;
   contactNumber: string;
 }
+
+    

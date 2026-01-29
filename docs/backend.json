@@ -177,7 +177,7 @@
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "Review",
       "type": "object",
-      "description": "Represents a review and rating for a property submitted by a student.",
+      "description": "Represents a review and rating for a property or mess listing, submitted by a student.",
       "properties": {
         "id": {
           "type": "string",
@@ -193,7 +193,11 @@
         },
         "propertyId": {
           "type": "string",
-          "description": "Reference to Property. (Relationship: Property 1:N Review)"
+          "description": "Reference to a Property. A review must be linked to either a property or a mess."
+        },
+        "messId": {
+          "type": "string",
+          "description": "Reference to a MessListing. A review must be linked to either a property or a mess."
         },
         "studentId": {
           "type": "string",
@@ -204,7 +208,6 @@
         "id",
         "rating",
         "comment",
-        "propertyId",
         "studentId"
       ]
     },
@@ -318,7 +321,7 @@
           "schema": {
             "$ref": "#/backend/entities/Review"
           },
-          "description": "Represents a review and rating for a property submitted by a student. Includes 'propertyId' and 'studentId' for linking reviews to properties and students.",
+          "description": "Represents a review and rating for a property or mess listing submitted by a student. Includes 'propertyId' or 'messId', and 'studentId' for linking reviews to properties/messes and students.",
           "params": [
             {
               "name": "reviewId",
@@ -363,3 +366,5 @@
     "reasoning": "The Firestore data structure is designed to support the Campus Connect platform, focusing on property listings, mess services, student reviews, and user roles (Property Owner and Student). It prioritizes authorization independence, clear access models, and predictable data schemas for secure and scalable operations.\n\n**Authorization Independence:** To avoid hierarchical authorization dependencies, `Property` and `MessListing` documents include an `ownerId` (or `propertyOwnerId`), denormalizing the relationship. This eliminates the need for `get()` calls to the owner document in security rules, enabling atomic operations. Similarly, `Review` documents include `propertyId` and `studentId` to independently associate reviews with properties and students, avoiding complex `get()` calls for authorization.\n\n**Structural Segregation:**  The data structure segregates data based on access requirements.  User profiles (`Student` and `PropertyOwner`) are stored in separate top-level collections.  Properties and Mess Listings are stored in their own collections (`properties`, `mess_listings`), but are secured using an owner ID field which provides clear ownership and prevents unauthorized updates.  Reviews are stored in a `reviews` collection.\n\n**Access Modeling:** The structure follows a path-based ownership model for user-owned data and a membership model where applicable.\n\n*   `/students/{studentId}`:  Standard path-based ownership for student profiles.\n*   `/properties/{propertyId}` & `/mess_listings/{messListingId}`: Listings are globally accessible for reading but restricted for creation/modification to the respective owner.\n*   `/reviews/{reviewId}`: Reviews are accessible, but creating a review is restricted to authenticated students, referencing the `studentId`.\n\n**QAPs (Rules are not Filters):**\n\n*   Secure `list` operations are supported through structural segregation. Listing properties and messes is generally allowed, but creation and modification are restricted to owners.  Listing reviews is generally allowed. Security rules ensure that students can only create reviews associated with their `studentId`.\n\n**Data Clarity and Predictability:** Explicit state modeling is enforced through the use of required fields in each entity schema. Naming conventions are consistently applied, enhancing readability and maintainability."
   }
 }
+
+    

@@ -164,8 +164,10 @@ export default function PropertyDetailsPage({ params }: { params: { id: string }
       <Separator className="my-12" />
 
       <div>
-        <ReviewList reviews={reviews} propertyId={property.id} />
+        <ReviewList reviews={reviews} targetId={property.id} targetType="property" />
       </div>
     </div>
   );
 }
+
+    

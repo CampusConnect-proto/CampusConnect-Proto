@@ -33,6 +33,8 @@ export default function MessPage() {
 
   const filteredAndSortedMess = useMemo(() => {
     let filtered = mockMessListings.filter(mess => {
+      const hasImage = mess.imageIds && mess.imageIds.length > 0;
+      
       const searchLower = searchQuery.toLowerCase();
       const matchesSearch = 
         mess.name.toLowerCase().includes(searchLower) ||
@@ -42,7 +44,7 @@ export default function MessPage() {
       const matchesPrice = monthlyPrice >= filters.priceRange.min && monthlyPrice <= filters.priceRange.max;
       const matchesFoodType = filters.foodType === 'any' || mess.foodType === filters.foodType;
 
-      return matchesSearch && matchesPrice && matchesFoodType;
+      return hasImage && matchesSearch && matchesPrice && matchesFoodType;
     });
 
     const sorted = [...filtered].sort((a, b) => {
@@ -137,3 +139,5 @@ export default function MessPage() {
     </div>
   );
 }
+
+    

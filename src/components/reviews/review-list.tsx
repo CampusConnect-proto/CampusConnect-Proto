@@ -21,10 +21,11 @@ const reviewSchema = z.object({
 
 interface ReviewListProps {
   reviews: Review[];
-  propertyId: string;
+  targetId: string;
+  targetType: 'property' | 'mess';
 }
 
-export function ReviewList({ reviews, propertyId }: ReviewListProps) {
+export function ReviewList({ reviews, targetId, targetType }: ReviewListProps) {
   const [showAll, setShowAll] = useState(false);
   const displayedReviews = showAll ? reviews : reviews.slice(0, 3);
   const [hoveredRating, setHoveredRating] = useState(0);
@@ -40,7 +41,11 @@ export function ReviewList({ reviews, propertyId }: ReviewListProps) {
   const currentRating = form.watch("rating");
 
   function onSubmit(values: z.infer<typeof reviewSchema>) {
-    console.log("New review submitted:", { ...values, propertyId });
+    const reviewData = {
+        ...values,
+        [`${targetType}Id`]: targetId,
+    };
+    console.log("New review submitted:", reviewData);
     // In a real app, you would save this review to your database.
     form.reset();
   }
@@ -121,3 +126,5 @@ export function ReviewList({ reviews, propertyId }: ReviewListProps) {
     </div>
   );
 }
+
+    

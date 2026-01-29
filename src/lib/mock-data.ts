@@ -396,4 +396,33 @@ export const mockReviews: Review[] = [
     comment: 'The pool is amazing! Totally worth the price.',
     createdAt: '2023-10-12T16:45:00Z',
   },
+  {
+    id: 'rev7',
+    messId: 'mess1',
+    studentId: 'stud1',
+    studentName: 'Rohan Sharma',
+    rating: 5,
+    comment: 'The food is just like home. Highly recommended!',
+    createdAt: '2023-10-15T12:00:00Z',
+  },
+  {
+    id: 'rev8',
+    messId: 'mess1',
+    studentId: 'stud2',
+    studentName: 'Priya Singh',
+    rating: 4,
+    comment: 'Good food, but sometimes the delivery is a bit late. Overall great service.',
+    createdAt: '2023-10-16T19:00:00Z',
+  },
+  {
+    id: 'rev9',
+    messId: 'mess2',
+    studentId: 'stud3',
+    studentName: 'Ankit Kumar',
+    rating: 5,
+    comment: "Priya's Kitchen is the best! The non-veg options are amazing.",
+    createdAt: '2023-10-18T20:00:00Z',
+  },
 ];
+
+    
