@@ -1,4 +1,5 @@
 
+
 export interface DailyMeals {
   breakfast: string;
   lunch: string;
@@ -88,4 +89,14 @@ export interface PropertyOwner {
   contactNumber: string;
 }
 
+export interface Suggestion {
+  id: string;
+  studentId: string;
+  propertyId: string;
+  studentName: string;
+  propertyName: string;
+  message: string;
+  createdAt: any; // Firestore Timestamp
+  status: 'open' | 'in-progress' | 'resolved';
+}
     

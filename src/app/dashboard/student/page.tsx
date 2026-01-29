@@ -7,18 +7,37 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { useUser, useFirestore, useDoc, useMemoFirebase } from '@/firebase';
-import { doc } from 'firebase/firestore';
+import { doc, collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import type { Student, Property } from '@/lib/types';
 import { useMemo, useState } from "react";
 import { mockProperties } from "@/lib/mock-data";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Textarea } from "@/components/ui/textarea";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
+import { useToast } from "@/hooks/use-toast";
+
+
+const suggestionSchema = z.object({
+  message: z.string().min(10, 'Please provide a more detailed message.').max(500, 'Your message is too long (max 500 characters).'),
+});
 
 
 export default function StudentDashboardPage() {
     const { user, isUserLoading } = useUser();
     const firestore = useFirestore();
+    const { toast } = useToast();
     const [isDemoMode, setIsDemoMode] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const suggestionForm = useForm<z.infer<typeof suggestionSchema>>({
+        resolver: zodResolver(suggestionSchema),
+        defaultValues: {
+            message: '',
+        },
+    });
 
     const studentDocRef = useMemoFirebase(() => {
         if (!user || !firestore) return null;
@@ -43,6 +62,34 @@ export default function StudentDashboardPage() {
 
     const isLoading = isUserLoading || isStudentLoading || (student?.bookedPropertyId && !isDemoMode && isPropertyLoading);
     const hasBooking = !!(student?.bookedPropertyId && bookedPropertyFromDB);
+
+     async function onSuggestionSubmit(values: z.infer<typeof suggestionSchema>) {
+        if (!user || !bookedProperty || !firestore || !student) {
+            toast({ variant: 'destructive', title: 'Error', description: 'You must be logged in and have a booked property to submit feedback.' });
+            return;
+        }
+        setIsSubmitting(true);
+        try {
+        const suggestionsCollection = collection(firestore, 'suggestions');
+        await addDoc(suggestionsCollection, {
+            studentId: user.uid,
+            studentName: student.name,
+            propertyId: bookedProperty.id,
+            propertyName: bookedProperty.name,
+            message: values.message,
+            createdAt: serverTimestamp(),
+            status: 'open'
+        });
+        toast({ title: 'Feedback Submitted', description: 'Thank you! The property owner has been notified.' });
+        suggestionForm.reset();
+        } catch (error) {
+            console.error("Error submitting suggestion:", error);
+            toast({ variant: 'destructive', title: 'Submission Failed', description: 'Could not submit your feedback. Please try again.' });
+        } finally {
+            setIsSubmitting(false);
+        }
+    }
+
 
     if (isLoading) {
         return (
@@ -182,7 +229,7 @@ export default function StudentDashboardPage() {
                                 </CardContent>
                             </Card>
 
-                            <Card>
+                             <Card>
                                 <CardHeader>
                                     <CardTitle className="flex items-center gap-2">
                                         <Wrench className="w-5 h-5"/>
@@ -191,10 +238,26 @@ export default function StudentDashboardPage() {
                                     <CardDescription>Report a problem or suggest an improvement for your room.</CardDescription>
                                 </CardHeader>
                                 <CardContent>
-                                    <form className="space-y-4">
-                                        <Textarea placeholder="e.g., The Wi-Fi is slow in my room, or it would be great to have a study table..." rows={4}/>
-                                        <Button className="w-full" disabled>Submit (Feature coming soon)</Button>
-                                    </form>
+                                    <Form {...suggestionForm}>
+                                        <form onSubmit={suggestionForm.handleSubmit(onSuggestionSubmit)} className="space-y-4">
+                                            <FormField
+                                                control={suggestionForm.control}
+                                                name="message"
+                                                render={({ field }) => (
+                                                    <FormItem>
+                                                    <FormControl>
+                                                        <Textarea placeholder="e.g., The Wi-Fi is slow in my room..." rows={4} {...field} disabled={isSubmitting}/>
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                    </FormItem>
+                                                )}
+                                            />
+                                            <Button type="submit" className="w-full" disabled={isSubmitting}>
+                                                 {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                                                Submit Feedback
+                                            </Button>
+                                        </form>
+                                    </Form>
                                 </CardContent>
                             </Card>
 

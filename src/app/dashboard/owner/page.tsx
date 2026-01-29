@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { DollarSign, Home, Users, PlusCircle, Eye, TrendingUp, Bell, CircleDollarSign, Loader2, Info } from "lucide-react";
+import { DollarSign, Home, Users, PlusCircle, Eye, TrendingUp, Bell, CircleDollarSign, Loader2, Info, MessageSquareText } from "lucide-react";
 import Link from 'next/link';
 import { OwnerEarningsChart } from '@/components/dashboard/owner/owner-earnings-chart';
 import Image from 'next/image';
@@ -20,11 +20,12 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { useUser, useFirestore, useCollection, useMemoFirebase, useDoc } from '@/firebase';
-import { collection, query, where, doc } from 'firebase/firestore';
-import type { Property, PropertyOwner } from '@/lib/types';
+import { collection, query, where, doc, orderBy } from 'firebase/firestore';
+import type { Property, PropertyOwner, Suggestion } from '@/lib/types';
 import { useMemo, useState } from "react";
 import { mockProperties } from "@/lib/mock-data";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { formatDistanceToNow } from "date-fns";
 
 export default function OwnerDashboardPage() {
     const { user, isUserLoading } = useUser();
@@ -69,6 +70,19 @@ export default function OwnerDashboardPage() {
         
         return { totalProperties, totalRent, totalCapacity, totalAvailability, occupancy };
     }, [displayProperties]);
+
+    const ownerPropertyIds = useMemo(() => {
+        if (!displayProperties) return [];
+        return displayProperties.map(p => p.id);
+    }, [displayProperties]);
+
+    const suggestionsQuery = useMemoFirebase(() => {
+        if (!firestore || ownerPropertyIds.length === 0) return null;
+        // Firestore 'in' queries are limited to 30 items. For a larger scale app, this would need a different approach.
+        return query(collection(firestore, 'suggestions'), where('propertyId', 'in', ownerPropertyIds), orderBy('createdAt', 'desc'));
+    }, [firestore, ownerPropertyIds]);
+
+    const { data: suggestions, isLoading: areSuggestionsLoading } = useCollection<Suggestion>(suggestionsQuery);
     
 
     const isLoading = isUserLoading || arePropertiesLoading || isOwnerLoading;
@@ -192,15 +206,41 @@ export default function OwnerDashboardPage() {
                         <div className="lg:col-span-2 space-y-8">
                             <Card>
                                 <CardHeader>
-                                    <CardTitle>Recent Activity</CardTitle>
-                                    <CardDescription>Latest updates from tenants and properties.</CardDescription>
+                                    <CardTitle>Room Member Issues</CardTitle>
+                                    <CardDescription>Recent feedback from tenants across your properties.</CardDescription>
                                 </CardHeader>
                                 <CardContent>
-                                    <div className="text-center text-muted-foreground py-8">
-                                        <Bell className="w-10 h-10 mx-auto mb-4 text-muted-foreground/50"/>
-                                        <p className="font-semibold">No Recent Activity</p>
-                                        <p className="text-sm">Updates from tenants and properties will appear here.</p>
-                                    </div>
+                                     {areSuggestionsLoading ? (
+                                        <div className="flex justify-center items-center h-40">
+                                            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                                        </div>
+                                    ) : !suggestions || suggestions.length === 0 ? (
+                                        <div className="text-center text-muted-foreground py-8">
+                                            <MessageSquareText className="w-10 h-10 mx-auto mb-4 text-muted-foreground/50"/>
+                                            <p className="font-semibold">No Issues Reported</p>
+                                            <p className="text-sm">Issues and suggestions from your tenants will appear here.</p>
+                                        </div>
+                                    ) : (
+                                        <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2">
+                                            {suggestions.map(suggestion => (
+                                                <div key={suggestion.id} className="p-3 rounded-lg border bg-muted/50">
+                                                    <div className="flex justify-between items-start gap-2">
+                                                        <div>
+                                                            <p className="font-semibold text-sm leading-tight">{suggestion.studentName}</p>
+                                                            <p className="text-xs text-muted-foreground">in <span className="font-medium">{suggestion.propertyName}</span></p>
+                                                        </div>
+                                                        <Badge variant={suggestion.status === 'open' ? 'destructive' : 'secondary'} className="capitalize text-xs whitespace-nowrap">{suggestion.status}</Badge>
+                                                    </div>
+                                                    <p className="mt-2 text-sm text-foreground/90">{suggestion.message}</p>
+                                                    {suggestion.createdAt?.toDate && (
+                                                        <p className="text-right text-xs text-muted-foreground mt-2">
+                                                            {formatDistanceToNow(suggestion.createdAt.toDate(), { addSuffix: true })}
+                                                        </p>
+                                                    )}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
                                 </CardContent>
                             </Card>
                              <Card>
