@@ -16,6 +16,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { ThemeToggle } from '../theme-toggle';
 
 export function Header() {
   const pathname = usePathname();
@@ -130,12 +131,13 @@ export function Header() {
 
             {!isUserLoading && (!user || user.isAnonymous) && (
               <>
+                <ThemeToggle />
                 <Button variant="ghost" asChild>
                   <Link href="/login">
                     Login
                   </Link>
                 </Button>
-                 <Button asChild className="bg-green-600 hover:bg-green-700">
+                 <Button asChild className="rounded-full">
                   <Link href="/signup">
                     Sign Up
                   </Link>
@@ -144,6 +146,8 @@ export function Header() {
             )}
 
             {!isUserLoading && user && !user.isAnonymous && (
+              <>
+                <ThemeToggle />
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="ghost" className="relative h-10 w-10 rounded-full">
@@ -168,6 +172,7 @@ export function Header() {
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
+              </>
             )}
           </div>
         </div>

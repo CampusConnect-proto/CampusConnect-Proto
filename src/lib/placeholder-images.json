@@ -1,11 +1,6 @@
+
 {
   "placeholderImages": [
-    {
-      "id": "hero",
-      "description": "A vibrant image of a modern university campus or student living area.",
-      "imageUrl": "https://images.unsplash.com/photo-1627520219450-48835839ed9f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxJbmRpYW4lMjBzdHVkZW50cyUyMHVuaXZlcnNpdHl8ZW58MHx8fHwxNzY4NTk3ODU5fDA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "Indian students university"
-    },
     {
       "id": "onboarding-student",
       "description": "A group of happy students walking on a university campus.",
@@ -21,7 +16,7 @@
     {
       "id": "property-1-1",
       "description": "A typical shared room in an Indian PG or hostel.",
-      "imageUrl": "https://images.unsplash.com/photo-1708616178113-f687b1113414?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxJbmRpYW4lMjBob3N0ZWwlMjByb29tfGVufDB8fHx8MTc2NjQyMzk3NXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1705573369572-e30d26006707?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxN3x8aG9zdGVsfGVufDB8fHx8MTc2OTcxNjM1OXww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "Indian hostel room"
     },
     {
@@ -45,20 +40,14 @@
     {
       "id": "property-3-1",
       "description": "A well-lit shared room with two beds.",
-      "imageUrl": "https://images.unsplash.com/photo-1708616178113-f687b1113414?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxJbmRpYW4lMjBob3N0ZWwlMjByb29tfGVufDB8fHx8MTc2NjQyMzk3NXww&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "Indian hostel room"
+      "imageUrl": "https://images.unsplash.com/photo-1549499090-c9203d2b20ad?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxpbmRpYW4lMjBmbGF0c3xlbnwwfHx8fDE3Njk3MTc0ODd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "shared hostel room"
     },
     {
       "id": "property-3-2",
       "description": "Building exterior with lots of greenery.",
       "imageUrl": "https://images.unsplash.com/photo-1748347568959-32458571998d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8SW5kaWFuJTIwUEclMjBidWlsZGluZ3xlbnwwfHx8fDE3NjY0MjM5NzV8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "Indian PG building"
-    },
-    {
-      "id": "property-4-1",
-      "description": "A standard room in a student PG near Delhi University.",
-      "imageUrl": "https://images.unsplash.com/photo-1629737273704-5c96a46f63e6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxJbmRpYW4lMjBob3N0ZWwlMjByb29tfGVufDB8fHx8MTc2NjQyMzk3NXww&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "Indian hostel room"
     },
     {
       "id": "property-5-1",
@@ -89,6 +78,12 @@
       "description": "Interior of a busy but clean university canteen.",
       "imageUrl": "https://images.unsplash.com/photo-1559560329-e4b17eb5726b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxjb2xsZWdlJTIwY2FudGVlbiUyMGluZGlhbnxlbnwwfHx8fDE3Njk3MDkxMjR8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "college canteen"
+    },
+    {
+      "id": "ai-recommendations",
+      "description": "Abstract technology background for AI features.",
+      "imageUrl": "https://images.unsplash.com/photo-1554474051-02569c882439?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      "imageHint": "abstract technology"
     }
   ]
 }

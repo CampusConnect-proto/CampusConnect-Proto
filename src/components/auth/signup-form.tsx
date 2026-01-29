@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useForm } from 'react-hook-form';
@@ -73,7 +72,7 @@ export function SignupForm() {
           id: user.uid,
           name: values.name,
           email: values.email,
-          collegeName: 'Not specified', // Placeholder value
+          collegeName: '', // Changed to empty string to indicate it needs completion
         });
       } else { // owner
         const ownerDocRef = doc(firestore, 'propertyOwners', user.uid);
@@ -81,16 +80,16 @@ export function SignupForm() {
           id: user.uid,
           name: values.name,
           email: values.email,
-          contactNumber: 'Not specified', // Placeholder value
+          contactNumber: '', // Changed to empty string to indicate it needs completion
         });
       }
 
       toast({
         title: "Account Created!",
-        description: "Welcome to Campus Connect. Redirecting you now...",
+        description: "Welcome to Campus Connect. Let's complete your profile.",
       });
 
-      router.push('/dashboard');
+      router.push('/profile/edit'); // Redirect to the new profile completion page
 
     } catch (error: any) {
       console.error("Signup failed:", error);
