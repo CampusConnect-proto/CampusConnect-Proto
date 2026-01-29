@@ -1,7 +1,6 @@
 {
   "/page": "app/page.js",
-  "/dashboard/owner/page": "app/dashboard/owner/page.js",
-  "/mess/page": "app/mess/page.js",
-  "/mess/[id]/page": "app/mess/[id]/page.js",
-  "/properties/page": "app/properties/page.js"
+  "/properties/page": "app/properties/page.js",
+  "/dashboard/page": "app/dashboard/page.js",
+  "/dashboard/student/page": "app/dashboard/student/page.js"
 }

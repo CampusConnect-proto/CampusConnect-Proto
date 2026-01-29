@@ -7,7 +7,7 @@ import { Building2, ArrowRight, ShieldCheck, Search, Wallet, Star, Utensils, Fil
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 export default function Home() {
-  const heroImage = PlaceHolderImages.find(p => p.id === 'property-2-1');
+  const heroImage = PlaceHolderImages.find(p => p.id === 'hero');
 
   const features = [
     {
@@ -44,7 +44,7 @@ export default function Home() {
           {heroImage && (
             <Image
               src={heroImage.imageUrl}
-              alt="A clean, modern single room in an Indian student residency."
+              alt="A vibrant image of a modern university campus or student living area."
               fill
               className="object-cover"
               priority
@@ -55,7 +55,7 @@ export default function Home() {
           <div className="relative z-10 p-4 animate-fade-in-up">
             <div className="flex justify-center md:justify-center items-center gap-3 mb-4">
               <Building2 className="h-10 w-10" />
-              <span className="text-3xl font-bold font-headline">Campus Connect</span>
+              <span className="text-3xl font-bold font-headline bg-gradient-to-r from-gray-100 to-gray-400 bg-clip-text text-transparent">Campus Connect</span>
             </div>
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight font-headline">
               Your Campus Life, Connected.
