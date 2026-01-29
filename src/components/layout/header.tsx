@@ -90,7 +90,6 @@ export function Header() {
                         {link.label}
                       </Link>
                     ))}
-                     <Link href="/contact" className="flex items-center gap-2 text-foreground/80 transition-colors hover:text-foreground">Contact</Link>
                   </nav>
                   <div className="mt-auto grid gap-4 text-lg font-medium">
                     <DropdownMenuSeparator />
@@ -134,7 +133,7 @@ export function Header() {
                     Login
                   </Link>
                 </Button>
-                 <Button asChild>
+                 <Button asChild className="bg-green-600 hover:bg-green-700">
                   <Link href="/signup">
                     Sign Up
                   </Link>
