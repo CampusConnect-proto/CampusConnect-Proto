@@ -13,6 +13,9 @@ export function Footer() {
           © {new Date().getFullYear()} Campus Connect. All rights reserved.
         </p>
         <nav className="flex gap-4 sm:gap-6">
+          <Link href="/contact" className="text-sm hover:underline underline-offset-4">
+            Contact
+          </Link>
           <Link href="#" className="text-sm hover:underline underline-offset-4">
             Terms of Service
           </Link>

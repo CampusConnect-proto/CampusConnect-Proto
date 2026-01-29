@@ -27,7 +27,6 @@ export function Header() {
     { href: '/properties', label: 'Properties'},
     { href: '/mess', label: 'Mess'},
     { href: '/dashboard', label: 'Dashboard' },
-    { href: '/contact', label: 'Contact' },
   ];
 
   const NavLink = ({ href, label, icon }: { href: string; label: string; icon?: React.ReactNode }) => (
@@ -91,6 +90,7 @@ export function Header() {
                         {link.label}
                       </Link>
                     ))}
+                     <Link href="/contact" className="flex items-center gap-2 text-foreground/80 transition-colors hover:text-foreground">Contact</Link>
                   </nav>
                   <div className="mt-auto grid gap-4 text-lg font-medium">
                     <DropdownMenuSeparator />
