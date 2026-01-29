@@ -89,7 +89,7 @@ export default function Home() {
               </p>
             </div>
              <div className="relative mt-12 flex w-full max-w-7xl mx-auto flex-col items-center justify-center overflow-hidden">
-                <div className="flex w-max animate-marquee [--duration:30s] hover:[animation-play-state:paused]">
+                <div className="flex w-max animate-marquee [--duration:50s] hover:[animation-play-state:paused]">
                     {[...features, ...features].map((feature, index) => (
                         <div key={index} className="mx-4 h-full w-[22rem] flex-shrink-0 rounded-xl bg-background p-8 text-center shadow-md border">
                             <div className="mb-5 inline-flex items-center justify-center rounded-full bg-primary/10 p-4 ring-8 ring-primary/5">

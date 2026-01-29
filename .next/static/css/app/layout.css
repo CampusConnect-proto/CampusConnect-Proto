@@ -2098,6 +2098,9 @@ video {
 .\[--duration\:30s\] {
   --duration: 30s;
 }
+.\[--duration\:50s\] {
+  --duration: 50s;
+}
 
 .file\:border-0::file-selector-button {
   border-width: 0px;
