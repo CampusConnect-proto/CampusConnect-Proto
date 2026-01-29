@@ -1,10 +1,9 @@
-
 'use client';
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Building2, Menu, PlusCircle, UserCircle, Sparkles, LayoutDashboard, ChevronDown } from 'lucide-react';
+import { Building2, Menu, PlusCircle, UserCircle, LayoutDashboard, ChevronDown } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { useUser } from '@/firebase';
@@ -107,14 +106,6 @@ export function Header() {
               </DropdownMenuContent>
             </DropdownMenu>
 
-            {!isUserLoading && user && (
-                <Button variant="outline" asChild>
-                  <Link href="/recommendations">
-                    <Sparkles className="mr-2 h-4 w-4" />
-                    AI Recommend
-                  </Link>
-                </Button>
-            )}
             {!isUserLoading && !user && (
               <>
                 <Button variant="ghost" asChild>
