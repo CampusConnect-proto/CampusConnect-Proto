@@ -1,27 +1,29 @@
+
 /**
  * This ruleset enforces a security model for the Campus Connect platform,
- * which facilitates property rentals for students. The model is designed to be
- * secure while allowing for rapid development and iteration.
+ * which facilitates property and mess rentals for students. The model is designed
+ * to be secure while allowing for rapid development and iteration.
  *
  * Core Philosophy:
  * The rules establish a clear separation between public-facing content and
- * private user data. Property and review information is publicly readable to
- * enable browsing and searching, but all write operations (creating, updating,
+ * private user data. Property, mess, and review information is publicly readable
+ * to enable browsing and searching, but all write operations (creating, updating,
  * deleting) are strictly controlled by user ownership. User profiles (for both
  * students and property owners) are private and can only be managed by the
  * owning user.
  *
  * Data Structure:
- * The data is organized into four distinct top-level collections:
+ * The data is organized into five distinct top-level collections:
  * - /properties: Contains all property listings.
+ * - /mess_listings: Contains all mess/tiffin service listings.
  * - /reviews: Contains all reviews for properties.
  * - /students: Contains private student user profiles.
  * - /propertyOwners: Contains private property owner user profiles.
  *
  * Key Security Decisions:
- * - Public Read, Private Write: The `/properties` and `/reviews` collections
- *   are publicly readable by anyone, including unauthenticated users, to
- *   support the core discovery features of the app. However, creating or
+ * - Public Read, Private Write: The `/properties`, `/mess_listings`, and `/reviews`
+ *   collections are publicly readable by anyone, including unauthenticated users,
+ *   to support the core discovery features of the app. However, creating or
  *   modifying this content is restricted to the authenticated owner.
  * - Strict User Privacy: The `/students` and `/propertyOwners` collections are
  *   private. A user can only access their own document, and listing all users
@@ -32,16 +34,14 @@
  * Denormalization for Authorization:
  * To ensure fast and simple authorization checks, ownership data is denormalized
  * directly onto the documents being secured.
- * - The `Property` document contains a `propertyOwnerId` field. This allows rules
- *   to verify ownership for updates without needing to read a separate user profile.
- * - The `Review` document contains a `studentId` field, which similarly links a
- *   review directly to its author for authorization checks.
+ * - `Property` documents contain `propertyOwnerId`.
+ * - `MessListing` documents contain `ownerId`.
+ * - `Review` documents contain a `studentId`.
  *
  * Structural Segregation:
- * User profile data (`/students`, `/propertyOwners`) is structurally segregated
- * from public application content (`/properties`, `/reviews`). This is a more
- * secure and performant pattern than mixing public and private documents in the
- * same collection with a flag. It makes list operations on public collections
+ * User profile data is structurally segregated from public application content.
+ * This is a more secure and performant pattern than mixing public and private
+ * documents in the same collection. It makes list operations on public collections
  * safe by design.
  */
 rules_version = '2';
@@ -52,74 +52,46 @@ service cloud.firestore {
     // Helper Functions
     // -------------------------------------------------------------------------
 
-    /**
-     * Checks if the user is authenticated.
-     */
     function isSignedIn() {
       return request.auth != null;
     }
 
-    /**
-     * Checks if the authenticated user's UID matches the provided userId.
-     * This is the fundamental check for document ownership.
-     * @param userId The UID to check against the authenticated user.
-     */
     function isOwner(userId) {
       return isSignedIn() && request.auth.uid == userId;
     }
 
-    /**
-     * Checks for ownership on an existing document. Used for update and delete
-     * operations to prevent actions on non-existent data.
-     * @param userId The UID of the document owner.
-     */
     function isExistingOwner(userId) {
       return isOwner(userId) && resource != null;
     }
 
-    /**
-     * Validates that the creator of a new Property document is the
-     * authenticated user.
-     */
     function isNewPropertyOwner(property) {
       return isOwner(property.propertyOwnerId);
     }
+    
+    function isNewMessOwner(messListing) {
+      return isOwner(messListing.ownerId);
+    }
 
-    /**
-     * Validates that the author of a new Review document is the authenticated
-     * student user.
-     */
     function isNewReviewAuthor(review) {
       return isOwner(review.studentId);
     }
     
-    /**
-     * Validates that a user profile being created corresponds to the
-     * authenticated user and that the internal ID matches the document ID.
-     * @param userDocId The document ID from the path (e.g., studentId).
-     * @param userProfile The incoming user profile data.
-     */
     function isCreatingOwnProfile(userDocId, userProfile) {
       return isOwner(userDocId) && userProfile.id == userDocId;
     }
 
-    /**
-     * Ensures critical relational fields like IDs are not changed during an update.
-     */
     function isIdImmutable(newDoc) {
       return newDoc.id == resource.data.id;
     }
     
-    /**
-     * Ensures the ownership link on a property is not changed during an update.
-     */
     function isPropertyOwnerImmutable(newDoc) {
       return newDoc.propertyOwnerId == resource.data.propertyOwnerId;
     }
+    
+    function isMessOwnerImmutable(newDoc) {
+      return newDoc.ownerId == resource.data.ownerId;
+    }
 
-    /**
-     * Ensures the author link on a review is not changed during an update.
-     */
     function isReviewAuthorImmutable(newDoc) {
       return newDoc.studentId == resource.data.studentId;
     }
@@ -127,38 +99,26 @@ service cloud.firestore {
     // -------------------------------------------------------------------------
     // Collection: properties
     // -------------------------------------------------------------------------
-
-    /**
-     * @description Controls access to property listings. Properties are public to
-     *   read for all users but can only be created, updated, or deleted
-     *   by the authenticated owner.
-     * @path /properties/{propertyId}
-     * @allow (get) Any user, signed in or not, can read a property listing.
-     * @deny (create) An unauthenticated user tries to create a new property.
-     * @principle Public Read with Owner-Only Writes. Ownership is determined by
-     *   the `propertyOwnerId` field within the document.
-     */
     match /properties/{propertyId} {
       allow get, list: if true;
       allow create: if isSignedIn() && isNewPropertyOwner(request.resource.data);
       allow update: if isExistingOwner(resource.data.propertyOwnerId) && isPropertyOwnerImmutable(request.resource.data);
       allow delete: if isExistingOwner(resource.data.propertyOwnerId);
     }
+    
+    // -------------------------------------------------------------------------
+    // Collection: mess_listings
+    // -------------------------------------------------------------------------
+    match /mess_listings/{messListingId} {
+      allow get, list: if true;
+      allow create: if isSignedIn() && isNewMessOwner(request.resource.data);
+      allow update: if isExistingOwner(resource.data.ownerId) && isMessOwnerImmutable(request.resource.data);
+      allow delete: if isExistingOwner(resource.data.ownerId);
+    }
 
     // -------------------------------------------------------------------------
     // Collection: reviews
     // -------------------------------------------------------------------------
-
-    /**
-     * @description Manages access to property reviews. Reviews are publicly
-     *   readable, but only the student who wrote a review can create,
-     *   update, or delete it.
-     * @path /reviews/{reviewId}
-     * @allow (create) An authenticated student creates a review for a property.
-     * @deny (update) A student tries to update a review written by another student.
-     * @principle Public Read with Owner-Only Writes. Ownership is based on the
-     *   `studentId` field within the document.
-     */
     match /reviews/{reviewId} {
       allow get, list: if true;
       allow create: if isSignedIn() && isNewReviewAuthor(request.resource.data);
@@ -169,17 +129,6 @@ service cloud.firestore {
     // -------------------------------------------------------------------------
     // Collection: students
     // -------------------------------------------------------------------------
-
-    /**
-     * @description Secures student user profiles. A student can only access
-     *   and manage their own profile document. Listing all students is
-     *   explicitly disallowed to protect user privacy.
-     * @path /students/{studentId}
-     * @allow (create) A new user creates their own student profile for the first time.
-     * @deny (get) A student tries to read the profile of another student.
-     * @principle Restricts access to a user's own data tree and prevents user
-     *   enumeration by disabling list queries.
-     */
     match /students/{studentId} {
       allow get: if isOwner(studentId);
       allow list: if false;
@@ -191,17 +140,6 @@ service cloud.firestore {
     // -------------------------------------------------------------------------
     // Collection: propertyOwners
     // -------------------------------------------------------------------------
-
-    /**
-     * @description Secures property owner user profiles. A property owner can
-     *   only access and manage their own profile document. Listing all
-     *   owners is explicitly disallowed to protect user privacy.
-     * @path /propertyOwners/{propertyOwnerId}
-     * @allow (update) An existing property owner updates their contact information.
-     * @deny (list) An API call attempts to fetch all property owners.
-     * @principle Restricts access to a user's own data tree and prevents user
-     *   enumeration by disabling list queries.
-     */
     match /propertyOwners/{propertyOwnerId} {
       allow get: if isOwner(propertyOwnerId);
       allow list: if false;

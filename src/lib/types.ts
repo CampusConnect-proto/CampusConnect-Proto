@@ -1,3 +1,38 @@
+
+export interface DailyMeals {
+  breakfast: string;
+  lunch: string;
+  dinner: string;
+}
+
+export interface MessListing {
+  id: string;
+  name: string;
+  description: string;
+  distanceFromCollege: number; // in km
+  foodType: 'veg' | 'non-veg' | 'both';
+  pricing: {
+    monthly?: number;
+    quarterly?: number;
+    perMeal?: number;
+  };
+  imageIds: string[];
+  averageRating: number;
+  reviewCount: number;
+  dailyMenu: {
+    monday: DailyMeals;
+    tuesday: DailyMeals;
+    wednesday: DailyMeals;
+    thursday: DailyMeals;
+    friday: DailyMeals;
+    saturday: DailyMeals;
+    sunday: DailyMeals;
+  };
+  address: string;
+  ownerId: string;
+}
+
+
 export interface Property {
   id: string;
   name: string;

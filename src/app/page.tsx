@@ -1,9 +1,10 @@
+
 'use client';
 
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Building2, ArrowRight, ShieldCheck, Search, Wallet, Star } from 'lucide-react';
+import { Building2, ArrowRight, ShieldCheck, Search, Wallet, Star, Utensils } from 'lucide-react';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 export default function Home() {
@@ -19,6 +20,11 @@ export default function Home() {
       icon: <Search className="h-8 w-8 text-primary" />,
       title: 'Advanced Search',
       description: 'Filter by distance, rent, amenities, and more to find your perfect match.',
+    },
+     {
+      icon: <Utensils className="h-8 w-8 text-primary" />,
+      title: 'Hygienic Mess',
+      description: 'Discover top-rated tiffin services and mess halls with daily menus.',
     },
     {
       icon: <Wallet className="h-8 w-8 text-primary" />,
@@ -53,15 +59,20 @@ export default function Home() {
               <span className="text-3xl font-bold font-headline">Campus Connect</span>
             </div>
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight font-headline">
-              Find Your Perfect Student Home
+              Your Campus Life, Connected.
             </h1>
             <p className="mt-4 text-lg md:text-xl max-w-2xl mx-auto">
-              Your one-stop solution for student accommodations. Search, compare, and book your ideal stay near campus.
+              The easiest way to find student accommodations and mess services. Search, compare, and book your ideal stay and meals.
             </p>
-            <div className="mt-8">
-              <Button size="lg" asChild className="font-bold text-lg transition-transform transform hover:scale-105">
-                <Link href="/onboarding">
-                  Get Started <ArrowRight className="ml-2 h-5 w-5" />
+            <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
+              <Button size="lg" asChild className="font-bold text-lg transition-transform transform hover:scale-105 w-full sm:w-auto">
+                <Link href="/properties">
+                  Explore Stays <ArrowRight className="ml-2 h-5 w-5" />
+                </Link>
+              </Button>
+              <Button size="lg" variant="secondary" asChild className="font-bold text-lg transition-transform transform hover:scale-105 w-full sm:w-auto">
+                <Link href="/mess">
+                  Explore Mess
                 </Link>
               </Button>
             </div>
@@ -75,7 +86,7 @@ export default function Home() {
                 Why Choose Campus Connect?
               </h2>
               <p className="mt-4 text-lg text-muted-foreground">
-                We make finding student housing simple, safe, and stress-free.
+                We make finding student housing and meals simple, safe, and stress-free.
               </p>
             </div>
             <div className="relative mt-12 w-full overflow-hidden">
@@ -96,6 +107,38 @@ export default function Home() {
                 </div>
             </div>
           </div>
+        </section>
+
+        <section className="py-12 px-6 bg-muted/40">
+            <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <div className="bg-background rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow border border-gray-100 group">
+                    <div className="p-8">
+                        <div className="text-primary font-bold text-sm uppercase mb-2">Verified Hostels</div>
+                        <h3 className="text-2xl font-bold mb-4 font-headline">Explore Stays</h3>
+                        <p className="text-gray-600 mb-6">Find the perfect room near campus with student-verified reviews and transparent pricing.</p>
+                        <Button asChild>
+                            <Link href="/properties" className="flex items-center">
+                                Browse Rooms <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                            </Link>
+                        </Button>
+                    </div>
+                </div>
+
+                <div className="bg-background rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow border border-gray-100 group">
+                    <div className="p-8">
+                        <div className="text-primary font-bold text-sm uppercase mb-2">Daily Meals</div>
+                        <h3 className="text-2xl font-bold mb-4 font-headline">Explore Mess</h3>
+                        <p className="text-gray-600 mb-6">Discover top-rated tiffin services and mess halls. View menus and subscription plans today.</p>
+                        <Button asChild>
+                            <Link href="/mess" className="flex items-center">
+                                View Menus <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                            </Link>
+                        </Button>
+                    </div>
+                </div>
+
+            </div>
         </section>
       </main>
     </div>

@@ -1,5 +1,75 @@
 
-import type { Property, Review } from './types';
+import type { Property, Review, MessListing } from './types';
+
+export const mockMessListings: MessListing[] = [
+  {
+    id: 'mess1',
+    name: "Rohan's Tiffin Service",
+    description: "Healthy and delicious home-cooked meals delivered to your doorstep. Specializing in North Indian cuisine.",
+    distanceFromCollege: 1.2,
+    foodType: 'veg',
+    pricing: { monthly: 3500, perMeal: 120 },
+    imageIds: ['mess-1-1'],
+    averageRating: 4.8,
+    reviewCount: 72,
+    address: 'Hauz Khas, New Delhi',
+    ownerId: 'owner1',
+    dailyMenu: {
+      monday: { breakfast: 'Aloo Paratha', lunch: 'Rajma Chawal', dinner: 'Shahi Paneer' },
+      tuesday: { breakfast: 'Poha', lunch: 'Kadhi Pakoda', dinner: 'Mix Veg' },
+      wednesday: { breakfast: 'Idli Sambhar', lunch: 'Chole Bhature', dinner: 'Dal Makhani' },
+      thursday: { breakfast: 'Upma', lunch: 'Aloo Gobi', dinner: 'Paneer Butter Masala' },
+      friday: { breakfast: 'Sandwich', lunch: 'Dal Fry', dinner: 'Kofta Curry' },
+      saturday: { breakfast: 'Cheela', lunch: 'Special Thali', dinner: 'Chana Masala' },
+      sunday: { breakfast: 'Puri Sabji', lunch: 'Special Thali', dinner: 'Paneer Lababdar' }
+    }
+  },
+  {
+    id: 'mess2',
+    name: "Priya's Kitchen",
+    description: "Authentic South Indian and North Indian dishes. Both veg and non-veg options available.",
+    distanceFromCollege: 2.5,
+    foodType: 'both',
+    pricing: { monthly: 4500, quarterly: 12000, perMeal: 150 },
+    imageIds: ['mess-2-1'],
+    averageRating: 4.5,
+    reviewCount: 55,
+    address: 'Sector 125, Noida',
+    ownerId: 'owner2',
+    dailyMenu: {
+      monday: { breakfast: 'Dosa', lunch: 'Chicken Curry', dinner: 'Egg Bhurji' },
+      tuesday: { breakfast: 'Poha', lunch: 'Fish Fry', dinner: 'Aloo Matar' },
+      wednesday: { breakfast: 'Idli Sambhar', lunch: 'Mutton Rogan Josh', dinner: 'Dal Makhani' },
+      thursday: { breakfast: 'Upma', lunch: 'Chicken Biryani', dinner: 'Paneer Butter Masala' },
+      friday: { breakfast: 'Sandwich', lunch: 'Dal Fry', dinner: 'Kofta Curry' },
+      saturday: { breakfast: 'Cheela', lunch: 'Special Thali', dinner: 'Chana Masala' },
+      sunday: { breakfast: 'Puri Sabji', lunch: 'Special Thali', dinner: 'Paneer Lababdar' }
+    }
+  },
+  {
+    id: 'mess3',
+    name: "Campus Canteen",
+    description: "Official university canteen serving a variety of snacks and meals at subsidized rates.",
+    distanceFromCollege: 0.1,
+    foodType: 'veg',
+    pricing: { perMeal: 50 },
+    imageIds: ['mess-3-1'],
+    averageRating: 4.1,
+    reviewCount: 150,
+    address: 'IIT Delhi Campus',
+    ownerId: 'owner3',
+    dailyMenu: {
+      monday: { breakfast: 'Samosa', lunch: 'Thali', dinner: 'Chowmein' },
+      tuesday: { breakfast: 'Poha', lunch: 'Thali', dinner: 'Fried Rice' },
+      wednesday: { breakfast: 'Idli Sambhar', lunch: 'Thali', dinner: 'Pasta' },
+      thursday: { breakfast: 'Upma', lunch: 'Thali', dinner: 'Pizza' },
+      friday: { breakfast: 'Sandwich', lunch: 'Thali', dinner: 'Burger' },
+      saturday: { breakfast: 'Cheela', lunch: 'Special Thali', dinner: 'Chole Bhature' },
+      sunday: { breakfast: 'Puri Sabji', lunch: 'Special Thali', dinner: 'Dosa' }
+    }
+  }
+];
+
 
 export const mockProperties: Property[] = [
   {

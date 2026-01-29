@@ -1,12 +1,19 @@
+
 'use client';
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Building2, Menu, PlusCircle, UserCircle, Sparkles, LayoutDashboard } from 'lucide-react';
+import { Building2, Menu, PlusCircle, UserCircle, Sparkles, LayoutDashboard, ChevronDown } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { useUser } from '@/firebase';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 export function Header() {
   const pathname = usePathname();
@@ -15,6 +22,7 @@ export function Header() {
   const navLinks = [
     { href: '/', label: 'Home'},
     { href: '/properties', label: 'Properties'},
+    { href: '/mess', label: 'Mess'},
     { href: '/dashboard', label: 'Dashboard' },
     { href: '/contact', label: 'Contact' },
   ];
@@ -81,8 +89,32 @@ export function Header() {
             </Sheet>
         </div>
         
-        <div className="flex items-center justify-end space-x-4">
+        <div className="flex items-center justify-end space-x-2">
           <div className="hidden md:flex items-center gap-2">
+             <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost">
+                  Partner with Us <ChevronDown className="ml-1 h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem asChild>
+                  <Link href="/owner/add-property">List a Property</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/owner/add-mess">List a Mess</Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {!isUserLoading && user && (
+                <Button variant="outline" asChild>
+                  <Link href="/recommendations">
+                    <Sparkles className="mr-2 h-4 w-4" />
+                    AI Recommend
+                  </Link>
+                </Button>
+            )}
             {!isUserLoading && !user && (
               <>
                 <Button variant="ghost" asChild>
@@ -96,14 +128,6 @@ export function Header() {
                   </Link>
                 </Button>
               </>
-            )}
-             {!isUserLoading && user && (
-                <Button variant="outline" asChild>
-                  <Link href="/recommendations">
-                    <Sparkles className="mr-2 h-4 w-4" />
-                    AI Recommend
-                  </Link>
-                </Button>
             )}
           </div>
         </div>

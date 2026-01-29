@@ -1,3 +1,4 @@
+
 {
   "entities": {
     "Property": {
@@ -117,6 +118,60 @@
         "ownerContactNumber",
         "propertyOwnerId"
       ]
+    },
+    "MessListing": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "MessListing",
+      "type": "object",
+      "description": "Represents a mess/tiffin service listing on the Campus Connect platform.",
+      "definitions": {
+        "meal": {
+          "type": "object",
+          "properties": {
+            "breakfast": { "type": "string" },
+            "lunch": { "type": "string" },
+            "dinner": { "type": "string" }
+          },
+          "required": ["breakfast", "lunch", "dinner"]
+        }
+      },
+      "properties": {
+        "id": { "type": "string", "description": "Unique identifier for the MessListing." },
+        "ownerId": { "type": "string", "description": "The UID of the user who owns this mess listing." },
+        "name": { "type": "string", "description": "Name of the mess service." },
+        "description": { "type": "string", "description": "Detailed description of the mess service." },
+        "address": { "type": "string", "description": "Physical address of the mess." },
+        "locationLat": { "type": "number", "description": "Latitude of the mess's location." },
+        "locationLng": { "type": "number", "description": "Longitude of the mess's location." },
+        "distanceFromCollege": { "type": "number", "description": "Distance from the nearest college in kilometers." },
+        "foodType": { "type": "string", "enum": ["veg", "non-veg", "both"], "description": "Type of food served." },
+        "pricing": {
+          "type": "object",
+          "properties": {
+            "monthly": { "type": "number" },
+            "quarterly": { "type": "number" },
+            "perMeal": { "type": "number" }
+          },
+          "description": "Pricing structure for the mess."
+        },
+        "images": { "type": "array", "items": { "type": "string" }, "description": "URLs of images for the mess." },
+        "averageRating": { "type": "number", "description": "Average rating from student reviews." },
+        "reviewCount": { "type": "number", "description": "Total number of reviews." },
+        "dailyMenu": {
+          "type": "object",
+          "description": "The weekly menu.",
+          "properties": {
+            "monday": { "$ref": "#/entities/MessListing/definitions/meal" },
+            "tuesday": { "$ref": "#/entities/MessListing/definitions/meal" },
+            "wednesday": { "$ref": "#/entities/MessListing/definitions/meal" },
+            "thursday": { "$ref": "#/entities/MessListing/definitions/meal" },
+            "friday": { "$ref": "#/entities/MessListing/definitions/meal" },
+            "saturday": { "$ref": "#/entities/MessListing/definitions/meal" },
+            "sunday": { "$ref": "#/entities/MessListing/definitions/meal" }
+          }
+        }
+      },
+      "required": ["id", "ownerId", "name", "description", "address", "locationLat", "locationLng", "distanceFromCollege", "foodType", "pricing", "images"]
     },
     "Review": {
       "$schema": "http://json-schema.org/draft-07/schema#",
@@ -241,6 +296,22 @@
         }
       },
       {
+        "path": "/mess_listings/{messListingId}",
+        "definition": {
+          "entityName": "MessListing",
+          "schema": {
+            "$ref": "#/backend/entities/MessListing"
+          },
+          "description": "Represents a mess or tiffin service listing.",
+          "params": [
+            {
+              "name": "messListingId",
+              "description": "Unique identifier for the MessListing entity."
+            }
+          ]
+        }
+      },
+      {
         "path": "/reviews/{reviewId}",
         "definition": {
           "entityName": "Review",
@@ -289,6 +360,6 @@
         }
       }
     ],
-    "reasoning": "The Firestore data structure is designed to support the Campus Connect platform, focusing on property listings, student reviews, and user roles (Property Owner and Student). It prioritizes authorization independence, clear access models, and predictable data schemas for secure and scalable operations.\n\n**Authorization Independence:** To avoid hierarchical authorization dependencies, the `Property` documents include the `propertyOwnerId`, denormalizing the relationship between the property and the owner. This eliminates the need for `get()` calls to the owner document in security rules, enabling atomic operations (transactions/batches). Similarly, `Review` documents include `propertyId` and `studentId` to independently associate reviews with properties and students, avoiding complex `get()` calls for authorization.\n\n**Structural Segregation:**  The data structure segregates data based on access requirements.  User profiles (`Student` and `PropertyOwner`) are stored in separate top-level collections.  Properties are stored in a single collection (`properties`), but are secured using the `propertyOwnerId` field which provides clear ownership and prevents unauthorized listing updates.  Reviews are stored in a collection (`reviews`).\n\n**Access Modeling:** The structure follows a path-based ownership model for user-owned data and a membership model where applicable.\n\n*   `/propertyOwners/{propertyOwnerId}/properties/{propertyId}`:  While not implemented in this version of the schema, it provides stronger ownership invariants.\n*   `/students/{studentId}`:  Standard path-based ownership for student profiles.\n*   `/properties/{propertyId}`: Properties are globally accessible for reading but restricted for creation/modification to the respective owner.\n*   `/reviews/{reviewId}`: Reviews are accessible, but creating a review is restricted to authenticated students, referencing the `studentId`.\n\n**QAPs (Rules are not Filters):**\n\n*   Secure `list` operations are supported through structural segregation. Listing properties is generally allowed, but creation and modification are restricted to property owners.  Listing reviews is generally allowed. Security rules ensure that students can only create reviews associated with their `studentId`.\n\n**Data Clarity and Predictability:** Explicit state modeling is enforced through the use of required fields in each entity schema. Naming conventions are consistently applied (e.g., `propertyOwnerId` for ownership), enhancing readability and maintainability."
+    "reasoning": "The Firestore data structure is designed to support the Campus Connect platform, focusing on property listings, mess services, student reviews, and user roles (Property Owner and Student). It prioritizes authorization independence, clear access models, and predictable data schemas for secure and scalable operations.\n\n**Authorization Independence:** To avoid hierarchical authorization dependencies, `Property` and `MessListing` documents include an `ownerId` (or `propertyOwnerId`), denormalizing the relationship. This eliminates the need for `get()` calls to the owner document in security rules, enabling atomic operations. Similarly, `Review` documents include `propertyId` and `studentId` to independently associate reviews with properties and students, avoiding complex `get()` calls for authorization.\n\n**Structural Segregation:**  The data structure segregates data based on access requirements.  User profiles (`Student` and `PropertyOwner`) are stored in separate top-level collections.  Properties and Mess Listings are stored in their own collections (`properties`, `mess_listings`), but are secured using an owner ID field which provides clear ownership and prevents unauthorized updates.  Reviews are stored in a `reviews` collection.\n\n**Access Modeling:** The structure follows a path-based ownership model for user-owned data and a membership model where applicable.\n\n*   `/students/{studentId}`:  Standard path-based ownership for student profiles.\n*   `/properties/{propertyId}` & `/mess_listings/{messListingId}`: Listings are globally accessible for reading but restricted for creation/modification to the respective owner.\n*   `/reviews/{reviewId}`: Reviews are accessible, but creating a review is restricted to authenticated students, referencing the `studentId`.\n\n**QAPs (Rules are not Filters):**\n\n*   Secure `list` operations are supported through structural segregation. Listing properties and messes is generally allowed, but creation and modification are restricted to owners.  Listing reviews is generally allowed. Security rules ensure that students can only create reviews associated with their `studentId`.\n\n**Data Clarity and Predictability:** Explicit state modeling is enforced through the use of required fields in each entity schema. Naming conventions are consistently applied, enhancing readability and maintainability."
   }
 }
