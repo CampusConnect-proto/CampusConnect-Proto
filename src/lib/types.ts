@@ -1,4 +1,5 @@
 
+import type { Timestamp } from 'firebase/firestore';
 
 export interface DailyMeals {
   breakfast: string;
@@ -97,7 +98,7 @@ export interface Suggestion {
   studentName: string;
   propertyName: string;
   message: string;
-  createdAt: any; // Firestore Timestamp
+  createdAt: Timestamp;
   status: 'open' | 'in-progress' | 'resolved';
 }
     

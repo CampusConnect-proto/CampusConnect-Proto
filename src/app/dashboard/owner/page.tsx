@@ -226,7 +226,7 @@ export default function OwnerDashboardPage() {
                                                         <Badge variant={suggestion.status === 'open' ? 'destructive' : 'secondary'} className="capitalize text-xs whitespace-nowrap">{suggestion.status}</Badge>
                                                     </div>
                                                     <p className="mt-2 text-sm text-foreground/90">{suggestion.message}</p>
-                                                    {suggestion.createdAt?.toDate && (
+                                                    {suggestion.createdAt && typeof suggestion.createdAt.toDate === 'function' && (
                                                         <p className="text-right text-xs text-muted-foreground mt-2">
                                                             {formatDistanceToNow(suggestion.createdAt.toDate(), { addSuffix: true })}
                                                         </p>
