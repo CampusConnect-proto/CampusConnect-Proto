@@ -1443,6 +1443,9 @@ video {
 .border-transparent {
   border-color: transparent;
 }
+.border-primary\/50 {
+  border-color: hsl(var(--primary) / 0.5);
+}
 .border-l-transparent {
   border-left-color: transparent;
 }
@@ -1859,6 +1862,9 @@ video {
 .text-yellow-400 {
   --tw-text-opacity: 1;
   color: rgb(250 204 21 / var(--tw-text-opacity, 1));
+}
+.text-primary\/80 {
+  color: hsl(var(--primary) / 0.8);
 }
 .underline-offset-4 {
   text-underline-offset: 4px;

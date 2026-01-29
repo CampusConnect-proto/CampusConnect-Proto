@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { DollarSign, Home, Users, PlusCircle, Eye, TrendingUp, Bell, CircleDollarSign, Loader2 } from "lucide-react";
+import { DollarSign, Home, Users, PlusCircle, Eye, TrendingUp, Bell, CircleDollarSign, Loader2, Info } from "lucide-react";
 import Link from 'next/link';
 import { OwnerEarningsChart } from '@/components/dashboard/owner/owner-earnings-chart';
 import Image from 'next/image';
@@ -22,11 +22,14 @@ import {
 import { useUser, useFirestore, useCollection, useMemoFirebase, useDoc } from '@/firebase';
 import { collection, query, where, doc } from 'firebase/firestore';
 import type { Property, PropertyOwner } from '@/lib/types';
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
+import { mockProperties } from "@/lib/mock-data";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 export default function OwnerDashboardPage() {
     const { user, isUserLoading } = useUser();
     const firestore = useFirestore();
+    const [isDemoMode, setIsDemoMode] = useState(false);
 
     const ownerDocRef = useMemoFirebase(() => {
         if (!user || !firestore) return null;
@@ -41,6 +44,13 @@ export default function OwnerDashboardPage() {
 
     const { data: ownerProperties, isLoading: arePropertiesLoading } = useCollection<Property>(propertiesQuery);
     
+    const displayProperties = useMemo(() => {
+        if (isDemoMode) {
+            return mockProperties.filter(p => ['owner1', 'owner2', 'owner3'].includes(p.propertyOwnerId));
+        }
+        return ownerProperties;
+    }, [isDemoMode, ownerProperties]);
+
     const {
         totalProperties,
         totalRent,
@@ -48,20 +58,21 @@ export default function OwnerDashboardPage() {
         totalAvailability,
         occupancy
     } = useMemo(() => {
-        if (!ownerProperties) {
+        if (!displayProperties) {
             return { totalProperties: 0, totalRent: 0, totalCapacity: 0, totalAvailability: 0, occupancy: 0 };
         }
-        const totalProperties = ownerProperties.length;
-        const totalRent = ownerProperties.reduce((acc, prop) => acc + prop.rent, 0);
-        const totalCapacity = ownerProperties.reduce((acc, prop) => acc + prop.totalCapacity, 0);
-        const totalAvailability = ownerProperties.reduce((acc, prop) => acc + prop.currentAvailability, 0);
+        const totalProperties = displayProperties.length;
+        const totalRent = displayProperties.reduce((acc, prop) => acc + prop.rent, 0);
+        const totalCapacity = displayProperties.reduce((acc, prop) => acc + prop.totalCapacity, 0);
+        const totalAvailability = displayProperties.reduce((acc, prop) => acc + prop.currentAvailability, 0);
         const occupancy = totalCapacity > 0 ? ((totalCapacity - totalAvailability) / totalCapacity) * 100 : 0;
         
         return { totalProperties, totalRent, totalCapacity, totalAvailability, occupancy };
-    }, [ownerProperties]);
+    }, [displayProperties]);
     
 
     const isLoading = isUserLoading || arePropertiesLoading || isOwnerLoading;
+    const hasProperties = ownerProperties && ownerProperties.length > 0;
 
     if (isLoading) {
         return (
@@ -71,10 +82,51 @@ export default function OwnerDashboardPage() {
         )
     }
 
+    if (!hasProperties && !isDemoMode) {
+        return (
+            <div className="bg-muted/40 min-h-[calc(100vh-4rem)]">
+                <div className="container mx-auto py-8 px-4 md:px-6">
+                     <div className="mb-8">
+                        <h1 className="text-3xl font-bold font-headline">Owner Dashboard</h1>
+                        <p className="text-muted-foreground">Welcome back, {owner?.name || user?.displayName || 'Owner'}!</p>
+                    </div>
+                    <Card className="text-center py-16">
+                        <CardHeader>
+                            <CardTitle>You haven't listed any properties yet.</CardTitle>
+                            <CardDescription>List your first property or view a demo of the dashboard.</CardDescription>
+                        </CardHeader>
+                        <CardContent className="flex justify-center items-center flex-wrap gap-4">
+                             <Button asChild size="lg">
+                                <Link href="/owner/add-property">
+                                    <PlusCircle className="mr-2 h-4 w-4" />
+                                    List Your First Property
+                                </Link>
+                            </Button>
+                             <Button size="lg" variant="secondary" onClick={() => setIsDemoMode(true)}>
+                                <Eye className="mr-2 h-4 w-4" />
+                                View Demo
+                            </Button>
+                        </CardContent>
+                    </Card>
+                </div>
+            </div>
+        )
+    }
+
     return (
         <div className="bg-muted/40 min-h-screen">
             <div className="container mx-auto py-8 px-4 md:px-6 space-y-12">
                 <section>
+                    {isDemoMode && (
+                        <Alert className="mb-8 border-primary/50 bg-primary/10">
+                            <Info className="h-4 w-4 text-primary" />
+                            <AlertTitle className="font-semibold text-primary">Demo Mode</AlertTitle>
+                            <AlertDescription className="flex justify-between items-center text-primary/80">
+                                You are currently viewing a demo of the owner dashboard. This is sample data.
+                                <Button variant="ghost" size="sm" onClick={() => setIsDemoMode(false)}>Exit Demo</Button>
+                            </AlertDescription>
+                        </Alert>
+                    )}
                     <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-8">
                         <div>
                             <h1 className="text-3xl font-bold font-headline">Owner Dashboard</h1>
@@ -134,7 +186,7 @@ export default function OwnerDashboardPage() {
                                 <CardDescription>A breakdown of your monthly rent per property.</CardDescription>
                             </CardHeader>
                             <CardContent>
-                                <OwnerEarningsChart properties={ownerProperties} />
+                                <OwnerEarningsChart properties={displayProperties} />
                             </CardContent>
                         </Card>
                         <div className="lg:col-span-2 space-y-8">
@@ -200,7 +252,7 @@ export default function OwnerDashboardPage() {
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
-                                    {ownerProperties && ownerProperties.map(prop => {
+                                    {displayProperties && displayProperties.map(prop => {
                                         const image = prop.imageIds.length > 0 ? PlaceHolderImages.find(p => p.id === prop.imageIds[0]) : null;
                                         return (
                                              <TableRow key={prop.id}>
@@ -244,17 +296,6 @@ export default function OwnerDashboardPage() {
                                     })}
                                 </TableBody>
                             </Table>
-                             {(!ownerProperties || ownerProperties.length === 0) && (
-                                <div className="text-center py-12">
-                                    <p className="text-muted-foreground">You haven't listed any properties yet.</p>
-                                    <Button asChild className="mt-4">
-                                        <Link href="/owner/add-property">
-                                            <PlusCircle className="mr-2 h-4 w-4" />
-                                            List Your First Property
-                                        </Link>
-                                    </Button>
-                                </div>
-                            )}
                         </CardContent>
                     </Card>
                 </section>

@@ -2,17 +2,22 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Home, Users, BedDouble, Calendar, Wallet, ShieldCheck, Phone, Building, Search, Loader2 } from "lucide-react";
+import { Home, Users, BedDouble, Calendar, Wallet, ShieldCheck, Phone, Building, Search, Loader2, Eye, Info } from "lucide-react";
 import Link from 'next/link';
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { useUser, useFirestore, useDoc, useMemoFirebase } from '@/firebase';
 import { doc } from 'firebase/firestore';
 import type { Student, Property } from '@/lib/types';
+import { useMemo, useState } from "react";
+import { mockProperties } from "@/lib/mock-data";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+
 
 export default function StudentDashboardPage() {
     const { user, isUserLoading } = useUser();
     const firestore = useFirestore();
+    const [isDemoMode, setIsDemoMode] = useState(false);
 
     const studentDocRef = useMemoFirebase(() => {
         if (!user || !firestore) return null;
@@ -21,12 +26,22 @@ export default function StudentDashboardPage() {
     const { data: student, isLoading: isStudentLoading } = useDoc<Student>(studentDocRef);
 
     const propertyDocRef = useMemoFirebase(() => {
-        if (!student?.bookedPropertyId || !firestore) return null;
+        if (!student?.bookedPropertyId || !firestore || isDemoMode) return null;
         return doc(firestore, 'properties', student.bookedPropertyId);
-    }, [student, firestore]);
-    const { data: bookedProperty, isLoading: isPropertyLoading } = useDoc<Property>(propertyDocRef);
+    }, [student, firestore, isDemoMode]);
 
-    const isLoading = isUserLoading || isStudentLoading || (student?.bookedPropertyId && isPropertyLoading);
+    const { data: bookedPropertyFromDB, isLoading: isPropertyLoading } = useDoc<Property>(propertyDocRef);
+
+    const bookedProperty = useMemo(() => {
+        if (isDemoMode) {
+            // Use a specific mock property for the demo that has an image and details.
+            return mockProperties.find(p => p.id === 'prop1');
+        }
+        return bookedPropertyFromDB;
+    }, [isDemoMode, bookedPropertyFromDB]);
+
+    const isLoading = isUserLoading || isStudentLoading || (student?.bookedPropertyId && !isDemoMode && isPropertyLoading);
+    const hasBooking = !!(student?.bookedPropertyId && bookedPropertyFromDB);
 
     if (isLoading) {
         return (
@@ -39,9 +54,9 @@ export default function StudentDashboardPage() {
         )
     }
 
-    if (!bookedProperty) {
+    if (!hasBooking && !isDemoMode) {
         return (
-             <div className="bg-muted/40 min-h-screen">
+             <div className="bg-muted/40 min-h-[calc(100vh-4rem)]">
                 <div className="container mx-auto py-8 px-4 md:px-6">
                      <div className="mb-8">
                         <h1 className="text-3xl font-bold font-headline">Student Dashboard</h1>
@@ -50,20 +65,35 @@ export default function StudentDashboardPage() {
                     <Card className="text-center py-16">
                         <CardHeader>
                             <CardTitle>No Property Booked Yet</CardTitle>
-                            <CardDescription>It looks like you haven't booked a property. Let's find your perfect student home!</CardDescription>
+                            <CardDescription>It looks like you haven't booked a property. Let's find your perfect student home or view a demo.</CardDescription>
                         </CardHeader>
-                        <CardContent>
+                        <CardContent className="flex justify-center items-center flex-wrap gap-4">
                              <Button asChild size="lg">
                                 <Link href="/properties">
                                     <Search className="w-4 h-4 mr-2"/>
                                     Explore Properties
                                 </Link>
                             </Button>
+                            <Button size="lg" variant="secondary" onClick={() => setIsDemoMode(true)}>
+                                <Eye className="mr-2 h-4 w-4" />
+                                View Demo
+                            </Button>
                         </CardContent>
                     </Card>
                 </div>
             </div>
         )
+    }
+    
+    if (!bookedProperty) {
+        // Fallback for when no property is found even in demo mode (e.g., if mock data changes)
+        return (
+             <div className="bg-muted/40 min-h-screen">
+                <div className="container mx-auto py-8 px-4 md:px-6">
+                    <p>Could not load property details. Please try again later.</p>
+                </div>
+            </div>
+        );
     }
 
     const studentImage = PlaceHolderImages.find(p => p.id === bookedProperty.imageIds[0]);
@@ -72,6 +102,16 @@ export default function StudentDashboardPage() {
         <div className="bg-muted/40 min-h-screen">
             <div className="container mx-auto py-8 px-4 md:px-6 space-y-12">
                  <section>
+                    {isDemoMode && (
+                        <Alert className="mb-8 border-primary/50 bg-primary/10">
+                            <Info className="h-4 w-4 text-primary" />
+                            <AlertTitle className="font-semibold text-primary">Demo Mode</AlertTitle>
+                            <AlertDescription className="flex justify-between items-center text-primary/80">
+                                You are currently viewing a demo of the student dashboard.
+                                <Button variant="ghost" size="sm" onClick={() => setIsDemoMode(false)}>Exit Demo</Button>
+                            </AlertDescription>
+                        </Alert>
+                    )}
                     <div className="mb-8">
                         <h1 className="text-3xl font-bold font-headline">Student Dashboard</h1>
                         <p className="text-muted-foreground">Welcome back, {student?.name || user?.displayName || 'Student'}! Here's an overview of your stay.</p>
