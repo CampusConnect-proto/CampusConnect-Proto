@@ -65,12 +65,12 @@ export default function Home() {
               The easiest way to find student accommodations and mess services. Search, compare, and book your ideal stay and meals.
             </p>
             <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Button size="lg" asChild className="font-bold text-lg transition-transform transform hover:scale-105 w-full sm:w-auto">
+              <Button size="lg" asChild className="font-bold text-lg transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:shadow-primary/20 w-full sm:w-auto">
                 <Link href="/properties">
                   Explore Stays <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
               </Button>
-              <Button size="lg" variant="secondary" asChild className="font-bold text-lg transition-transform transform hover:scale-105 w-full sm:w-auto">
+              <Button size="lg" variant="outline" asChild className="font-bold text-lg text-white border-white bg-transparent backdrop-blur-sm hover:bg-white hover:text-primary transition-all duration-300 transform hover:scale-105 w-full sm:w-auto">
                 <Link href="/mess">
                   Explore Mess
                 </Link>
