@@ -2259,6 +2259,10 @@ video {
   background-color: rgb(21 128 61 / var(--tw-bg-opacity, 1));
 }
 
+.hover\:bg-background\/90:hover {
+  background-color: hsl(var(--background) / 0.9);
+}
+
 .hover\:text-accent-foreground:hover {
   color: hsl(var(--accent-foreground));
 }
