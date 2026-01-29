@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -70,19 +71,18 @@ export default function StudentDashboardPage() {
         }
         setIsSubmitting(true);
         try {
-        const suggestionsCollection = collection(firestore, 'suggestions');
-        await addDoc(suggestionsCollection, {
-            studentId: user.uid,
-            studentName: student.name,
-            propertyId: bookedProperty.id,
-            propertyName: bookedProperty.name,
-            propertyOwnerId: bookedProperty.propertyOwnerId,
-            message: values.message,
-            createdAt: serverTimestamp(),
-            status: 'open'
-        });
-        toast({ title: 'Feedback Submitted', description: 'Thank you! The property owner has been notified.' });
-        suggestionForm.reset();
+            const suggestionsCollection = collection(firestore, 'propertyOwners', bookedProperty.propertyOwnerId, 'suggestions');
+            await addDoc(suggestionsCollection, {
+                studentId: user.uid,
+                studentName: student.name,
+                propertyId: bookedProperty.id,
+                propertyName: bookedProperty.name,
+                message: values.message,
+                createdAt: serverTimestamp(),
+                status: 'open'
+            });
+            toast({ title: 'Feedback Submitted', description: 'Thank you! The property owner has been notified.' });
+            suggestionForm.reset();
         } catch (error) {
             console.error("Error submitting suggestion:", error);
             toast({ variant: 'destructive', title: 'Submission Failed', description: 'Could not submit your feedback. Please try again.' });
@@ -286,3 +286,5 @@ export default function StudentDashboardPage() {
         </div>
     );
 }
+
+    

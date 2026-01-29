@@ -18,7 +18,8 @@
  * - /mess_listings: Contains all mess/tiffin service listings.
  * - /reviews: Contains all reviews for properties.
  * - /students: Contains private student user profiles.
- * - /propertyOwners: Contains private property owner user profiles.
+ * - /propertyOwners: Contains private property owner user profiles with a nested
+ *   'suggestions' subcollection.
  *
  * Key Security Decisions:
  * - Public Read, Private Write: The `/properties`, `/mess_listings`, and `/reviews`
@@ -28,8 +29,11 @@
  * - Strict User Privacy: The `/students` and `/propertyOwners` collections are
  *   private. A user can only access their own document, and listing all users
  *   in the collection is explicitly forbidden to prevent user enumeration.
- * - No Global Admins: This ruleset does not define a global administrator role;
- *   all permissions are based on document ownership.
+ * - Nested Suggestions for Security: The `suggestions` from students are stored
+ *   in a subcollection under the respective `/propertyOwners/{propertyOwnerId}`.
+ *   This is a critical data modeling decision that enables secure, queryable
+ *   access. It ensures that an owner can only ever list their own suggestions,
+ *   preventing data leakage.
  *
  * Denormalization for Authorization:
  * To ensure fast and simple authorization checks, ownership data is denormalized
@@ -103,10 +107,6 @@ service cloud.firestore {
     function isSuggestionStudentImmutable(newSuggestion) {
       return newSuggestion.studentId == resource.data.studentId;
     }
-    
-    function isSuggestionPropertyOwnerImmutable(newSuggestion) {
-      return newSuggestion.propertyOwnerId == resource.data.propertyOwnerId;
-    }
 
     // -------------------------------------------------------------------------
     // Collection: properties
@@ -158,17 +158,22 @@ service cloud.firestore {
       allow create: if isCreatingOwnProfile(propertyOwnerId, request.resource.data);
       allow update: if isExistingOwner(propertyOwnerId) && isIdImmutable(request.resource.data);
       allow delete: if isExistingOwner(propertyOwnerId);
-    }
 
-    // -------------------------------------------------------------------------
-    // Collection: suggestions
-    // -------------------------------------------------------------------------
-    match /suggestions/{suggestionId} {
-      allow get: if isSignedIn() && (isOwner(resource.data.studentId) || isOwner(resource.data.propertyOwnerId));
-      allow list: if isSignedIn() && request.query.where.propertyOwnerId == request.auth.uid;
-      allow create: if isSignedIn() && isNewSuggestionAuthor(request.resource.data) && request.resource.data.propertyOwnerId != null;
-      allow update: if isExistingOwner(resource.data.propertyOwnerId) && isSuggestionStudentImmutable(request.resource.data) && isSuggestionPropertyOwnerImmutable(request.resource.data);
-      allow delete: if isSignedIn() && (isOwner(resource.data.studentId) || isOwner(resource.data.propertyOwnerId));
+      // Subcollection: suggestions
+      match /suggestions/{suggestionId} {
+        // Owner can read suggestions for their properties. Student who wrote it can also read it.
+        allow get: if isOwner(propertyOwnerId) || isOwner(resource.data.studentId);
+        // Owner can list all suggestions for their properties.
+        allow list: if isOwner(propertyOwnerId);
+        // An authenticated student can create a suggestion. Path ensures it's for the right owner.
+        allow create: if isNewSuggestionAuthor(request.resource.data);
+        // Only the property owner can update the status of a suggestion.
+        allow update: if isOwner(propertyOwnerId) && isSuggestionStudentImmutable(request.resource.data);
+        // Owner or the original student can delete the suggestion.
+        allow delete: if isOwner(propertyOwnerId) || isOwner(resource.data.studentId);
+      }
     }
   }
 }
+
+    

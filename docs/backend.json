@@ -290,14 +290,13 @@
         "id": { "type": "string", "description": "Unique identifier for the Suggestion." },
         "studentId": { "type": "string", "description": "The UID of the student who submitted the suggestion." },
         "propertyId": { "type": "string", "description": "The ID of the property the suggestion is for." },
-        "propertyOwnerId": { "type": "string", "description": "The UID of the owner of the property." },
         "studentName": { "type": "string", "description": "The name of the student (denormalized)." },
         "propertyName": { "type": "string", "description": "The name of the property (denormalized)." },
         "message": { "type": "string", "description": "The content of the suggestion or issue." },
         "createdAt": { "type": "string", "format": "date-time", "description": "Timestamp of when the suggestion was created." },
         "status": { "type": "string", "enum": ["open", "in-progress", "resolved"], "description": "The current status of the suggestion." }
       },
-      "required": ["studentId", "propertyId", "propertyOwnerId", "message", "createdAt", "status"]
+      "required": ["studentId", "propertyId", "message", "createdAt", "status"]
     }
   },
   "auth": {
@@ -388,14 +387,18 @@
         }
       },
       {
-        "path": "/suggestions/{suggestionId}",
+        "path": "/propertyOwners/{propertyOwnerId}/suggestions/{suggestionId}",
         "definition": {
           "entityName": "Suggestion",
           "schema": {
             "$ref": "#/backend/entities/Suggestion"
           },
-          "description": "Stores student-submitted suggestions or issues for properties. Secured by propertyOwnerId and studentId.",
+          "description": "Stores student-submitted suggestions or issues for properties, nested under the property owner.",
           "params": [
+            {
+                "name": "propertyOwnerId",
+                "description": "Unique identifier for the PropertyOwner entity."
+            },
             {
               "name": "suggestionId",
               "description": "Unique identifier for the Suggestion entity."
@@ -404,6 +407,8 @@
         }
       }
     ],
-    "reasoning": "The Firestore data structure is designed to support the Campus Connect platform, focusing on property listings, mess services, student reviews, and user roles (Property Owner and Student). It prioritizes authorization independence, clear access models, and predictable data schemas for secure and scalable operations.\n\n**Authorization Independence:** To avoid hierarchical authorization dependencies, `Property` and `MessListing` documents include an `ownerId` (or `propertyOwnerId`), denormalizing the relationship. This eliminates the need for `get()` calls to the owner document in security rules, enabling atomic operations. Similarly, `Review` documents include `propertyId` and `studentId` to independently associate reviews with properties and students, avoiding complex `get()` calls for authorization.\n\n**Structural Segregation:**  The data structure segregates data based on access requirements.  User profiles (`Student` and `PropertyOwner`) are stored in separate top-level collections.  Properties and Mess Listings are stored in their own collections (`properties`, `mess_listings`), but are secured using an owner ID field which provides clear ownership and prevents unauthorized updates.  Reviews are stored in a `reviews` collection.\n\n**Access Modeling:** The structure follows a path-based ownership model for user-owned data and a membership model where applicable.\n\n*   `/students/{studentId}`:  Standard path-based ownership for student profiles.\n*   `/properties/{propertyId}` & `/mess_listings/{messListingId}`: Listings are globally accessible for reading but restricted for creation/modification to the respective owner.\n*   `/reviews/{reviewId}`: Reviews are accessible, but creating a review is restricted to authenticated students, referencing the `studentId`.\n\n**QAPs (Rules are not Filters):**\n\n*   Secure `list` operations are supported through structural segregation. Listing properties and messes is generally allowed, but creation and modification are restricted to owners.  Listing reviews is generally allowed. Security rules ensure that students can only create reviews associated with their `studentId`.\n\n**Data Clarity and Predictability:** Explicit state modeling is enforced through the use of required fields in each entity schema. Naming conventions are consistently applied, enhancing readability and maintainability."
+    "reasoning": "The Firestore data structure is designed to support the Campus Connect platform, focusing on property listings, mess services, student reviews, and user roles (Property Owner and Student). It prioritizes authorization independence, clear access models, and predictable data schemas for secure and scalable operations.\n\n**Authorization Independence:** To avoid hierarchical authorization dependencies, `Property` and `MessListing` documents include an `ownerId` (or `propertyOwnerId`), denormalizing the relationship. This eliminates the need for `get()` calls to the owner document in security rules, enabling atomic operations. Similarly, `Review` documents include `propertyId` and `studentId` to independently associate reviews with properties and students, avoiding complex `get()` calls for authorization.\n\n**Structural Segregation:**  The data structure segregates data based on access requirements.  User profiles (`Student` and `PropertyOwner`) are stored in separate top-level collections.  Properties and Mess Listings are stored in their own collections (`properties`, `mess_listings`), but are secured using an owner ID field which provides clear ownership and prevents unauthorized updates.  Reviews are stored in a `reviews` collection. `suggestions` are stored as a subcollection under `propertyOwners` to ensure owners can only read their own suggestions.\n\n**Access Modeling:** The structure follows a path-based ownership model for user-owned data and a membership model where applicable.\n\n*   `/students/{studentId}`:  Standard path-based ownership for student profiles.\n*   `/properties/{propertyId}` & `/mess_listings/{messListingId}`: Listings are globally accessible for reading but restricted for creation/modification to the respective owner.\n*   `/reviews/{reviewId}`: Reviews are accessible, but creating a review is restricted to authenticated students, referencing the `studentId`.\n*   `/propertyOwners/{propertyOwnerId}/suggestions/{suggestionId}`: This path-based ownership allows owners to securely list their own suggestions, while students can create them.\n\n**QAPs (Rules are not Filters):**\n\n*   Secure `list` operations are supported through structural segregation. Listing properties and messes is generally allowed, but creation and modification are restricted to owners.  Listing reviews is generally allowed. Security rules ensure that students can only create reviews associated with their `studentId`. For suggestions, the subcollection model allows for secure `list` operations scoped to the property owner.\n\n**Data Clarity and Predictability:** Explicit state modeling is enforced through the use of required fields in each entity schema. Naming conventions are consistently applied, enhancing readability and maintainability."
   }
 }
+
+    

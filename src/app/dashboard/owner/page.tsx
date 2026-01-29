@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -73,7 +74,8 @@ export default function OwnerDashboardPage() {
 
     const suggestionsQuery = useMemoFirebase(() => {
         if (!user || !firestore) return null;
-        return query(collection(firestore, 'suggestions'), where('propertyOwnerId', '==', user.uid), orderBy('createdAt', 'desc'));
+        const suggestionsCollectionPath = collection(firestore, 'propertyOwners', user.uid, 'suggestions');
+        return query(suggestionsCollectionPath, orderBy('createdAt', 'desc'));
     }, [user, firestore]);
 
     const { data: suggestions, isLoading: areSuggestionsLoading } = useCollection<Suggestion>(suggestionsQuery);
@@ -337,3 +339,5 @@ export default function OwnerDashboardPage() {
         </div>
     );
 }
+
+    
