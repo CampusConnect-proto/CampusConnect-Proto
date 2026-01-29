@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useForm } from 'react-hook-form';
@@ -5,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { useAuth } from '@/firebase';
 import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
@@ -32,6 +33,7 @@ const loginSchema = z.object({
 
 export function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const router = useRouter();
   const auth = useAuth();
   const { toast } = useToast();
@@ -65,6 +67,31 @@ export function LoginForm() {
     }
   }
 
+  async function handleGoogleSignIn() {
+    setIsGoogleLoading(true);
+    try {
+        const provider = new GoogleAuthProvider();
+        await signInWithPopup(auth, provider);
+        
+        toast({
+            title: "Login Successful",
+            description: "Welcome back! Redirecting you now...",
+        });
+        router.push('/dashboard');
+
+    } catch (error: any) {
+        console.error("Google sign in failed:", error);
+        toast({
+            variant: "destructive",
+            title: "Google Sign-In Failed",
+            description: error.message || "Could not sign in with Google. Please try again.",
+        });
+    } finally {
+        setIsGoogleLoading(false);
+    }
+  }
+
+
   return (
     <Card className="w-full max-w-md mx-auto">
       <CardHeader>
@@ -81,7 +108,7 @@ export function LoginForm() {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input placeholder="you@example.com" {...field} disabled={isLoading} />
+                    <Input placeholder="you@example.com" {...field} disabled={isLoading || isGoogleLoading} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -99,21 +126,21 @@ export function LoginForm() {
                         </Link>
                     </div>
                   <FormControl>
-                    <Input type="password" placeholder="••••••••" {...field} disabled={isLoading} />
+                    <Input type="password" placeholder="••••••••" {...field} disabled={isLoading || isGoogleLoading} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full" disabled={isLoading}>
+            <Button type="submit" className="w-full" disabled={isLoading || isGoogleLoading}>
               {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Sign In
             </Button>
           </form>
         </Form>
         <Separator className="my-6" />
-        <Button variant="outline" className="w-full" disabled>
-          <GoogleIcon className="mr-2 h-4 w-4" />
+        <Button variant="outline" className="w-full" onClick={handleGoogleSignIn} disabled={isLoading || isGoogleLoading}>
+          {isGoogleLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <GoogleIcon className="mr-2 h-4 w-4" />}
           Sign in with Google
         </Button>
         <div className="mt-6 text-center text-sm">
@@ -126,3 +153,5 @@ export function LoginForm() {
     </Card>
   );
 }
+
+    
