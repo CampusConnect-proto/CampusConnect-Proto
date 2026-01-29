@@ -69,7 +69,7 @@ export default function Home() {
                   Explore Stays <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
               </Button>
-              <Button size="lg" variant="outline" asChild className="font-bold text-lg text-white border-white bg-transparent backdrop-blur-sm hover:bg-white hover:text-primary transition-all duration-300 transform hover:scale-105 w-full sm:w-auto">
+              <Button size="lg" variant="ghost" asChild className="font-bold text-lg text-white border border-white bg-transparent backdrop-blur-sm hover:bg-white hover:text-primary transition-all duration-300 transform hover:scale-105 w-full sm:w-auto">
                 <Link href="/mess">
                   Explore Mess
                 </Link>
@@ -88,16 +88,22 @@ export default function Home() {
                 We make finding student housing and meals simple, safe, and stress-free.
               </p>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-12 max-w-5xl mx-auto">
-                {features.map((feature) => (
-                     <div key={feature.title} className="bg-background rounded-xl p-8 text-center shadow-md transition-all duration-300 hover:shadow-xl hover:-translate-y-1.5 border">
-                        <div className="mb-5 inline-flex items-center justify-center rounded-full bg-primary/10 p-4 ring-8 ring-primary/5">
-                            {feature.icon}
+             <div className="relative mt-12 flex w-full max-w-7xl mx-auto flex-col items-center justify-center overflow-hidden">
+                <div className="flex w-max animate-marquee [--duration:30s] hover:[animation-play-state:paused]">
+                    {[...features, ...features].map((feature, index) => (
+                        <div key={index} className="mx-4 h-full w-[22rem] flex-shrink-0 rounded-xl bg-background p-8 text-center shadow-md border">
+                            <div className="mb-5 inline-flex items-center justify-center rounded-full bg-primary/10 p-4 ring-8 ring-primary/5">
+                                {feature.icon}
+                            </div>
+                            <h3 className="text-xl font-bold">{feature.title}</h3>
+                            <p className="mt-2 text-muted-foreground">{feature.description}</p>
                         </div>
-                        <h3 className="text-xl font-bold">{feature.title}</h3>
-                        <p className="mt-2 text-muted-foreground">{feature.description}</p>
-                    </div>
-                ))}
+                    ))}
+                </div>
+                <div
+                    className="pointer-events-none absolute inset-y-0 left-0 w-1/4 bg-gradient-to-r from-muted/40 to-transparent"></div>
+                <div
+                    className="pointer-events-none absolute inset-y-0 right-0 w-1/4 bg-gradient-to-l from-muted/40 to-transparent"></div>
             </div>
           </div>
         </section>
