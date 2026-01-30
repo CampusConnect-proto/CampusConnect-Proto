@@ -1,6 +1,6 @@
 
 'use client';
-
+import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { DollarSign, Home, Users, PlusCircle, Eye, TrendingUp, Bell, CircleDollarSign, Loader2, Info, MessageSquareText } from "lucide-react";
@@ -87,7 +87,7 @@ export default function OwnerDashboardPage() {
     if (isLoading) {
         return (
             <div className="flex h-[calc(100vh-8rem)] w-full items-center justify-center">
-                <Loader2 className="h-12 w-12 animate-spin text-primary" />
+              <div className="h-12 w-12 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
             </div>
         )
     }
