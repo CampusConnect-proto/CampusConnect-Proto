@@ -61,7 +61,7 @@ Finding accommodation is often the most stressful part of student life due to fr
 ---
 
 ## 📐 System Architecture
-[cite_start]The project follows the **Spiral Model** for development, ensuring iterative refinement and risk reduction[cite: 104].
+The project follows the **Spiral Model** for development, ensuring iterative refinement and risk reduction[cite: 104].
 
 **Core Entities:**
 * **Student:** Searcher/Tenant
