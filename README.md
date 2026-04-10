@@ -114,7 +114,6 @@ Follow these steps to run the project locally:
 | :--- | :--- |
 | **Mr. Mayur Suresh Hiray** | Developer |
 | **Mr. Sahil Sachin Dhatrak** | Developer |
-| **Mr. Durgesh Anil Chune** | Developer |
 | **Mr. Yash Sushil Nikam** | Developer |
 
 **Internal Guide:** Prof. K.S.Pawar
