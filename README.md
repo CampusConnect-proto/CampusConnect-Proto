@@ -116,7 +116,7 @@ Follow these steps to run the project locally:
 | **Mr. Sahil Sachin Dhatrak** | Developer |
 | **Mr. Yash Sushil Nikam** | Developer |
 
-**Internal Guide:** Prof. K.S.Pawar
+**Internal Guide:** Prof.Mrs. P. A .Shinde      
 
 ---
 
