@@ -54,7 +54,7 @@ Finding accommodation is often the most stressful part of student life due to fr
 | :--- | :--- |
 | **Frontend** | React.js / HTML5, CSS3, JavaScript |
 | **Backend** | Node.js |
-| **Database** | MySQL / MongoDB |
+| **Database** | Firebase Database |
 | **IDE** | VS Code |
 | **Server** | LocalHost / Vercel (Deployment) |
 
@@ -89,7 +89,7 @@ Follow these steps to run the project locally:
     npm install
     ```
 4.  **Configure Database**
-    * Import the provided SQL file (if using MySQL) or configure your `.env` file with your MongoDB URI.
+    * Import the provided firebase.js 
 5.  **Run the application**
     ```bash
     npm start
